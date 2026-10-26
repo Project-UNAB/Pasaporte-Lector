@@ -42,10 +42,10 @@ scripts/cargar-claves.mjs       ← convierte claves.json (privado) en SQL con h
 3. **Authentication → Sign In / Providers → Email**: dejar activado el proveedor Email (el código por correo es la verificación).
 4. **Authentication → Emails → SMTP Settings**: configurar Brevo (host `smtp-relay.brevo.com`, puerto 587, usuario y llave SMTP de Brevo, remitente verificado).
 5. **Authentication → Rate Limits**: subir “emails per hour” (por ejemplo a 100) para los picos frente a los pósters.
-6. **Authentication → Emails → Templates**: en **Magic Link** y en **Confirm signup** pegar `supabase/plantillas/codigo.html` (usa `{{ .Token }}`, así llega un código y no un enlace). Asunto sugerido: *Tu código de Pasaporte Lector*.
+6. **Authentication → Emails → Templates**: en **Magic Link** y en **Confirm signup** pegar `supabase/plantillas/codigo.html` (usa `{{ .Token }}`, así llega un código y no un enlace). Asunto sugerido: *Tu código de Pasaporte Lector*. En el plan gratis, Supabase solo deja cambiar las plantillas **después** de configurar el SMTP propio (paso 4); sin este cambio el correo trae un enlace y el registro por código no funciona.
 7. **Authentication → URL Configuration**: poner el dominio final en *Site URL*.
 8. **Authentication → Hooks → Add hook → Before User Created**: tipo *Postgres Function*, esquema `public`, función `hook_antes_de_crear_usuario`. Rechaza otros dominios antes de crear el usuario o enviar el correo (el disparador sobre `auth.users` queda como segunda barrera).
-9. **Authentication → Sign In / Providers → Email**: confirmar que la longitud del código (*Email OTP Length*) sea 6.
+9. **Authentication → Sign In / Providers → Email**: poner la longitud del código (*Email OTP Length*) en 6. Los proyectos nuevos vienen con 8.
 
 #### Pruebas de la base de datos
 
