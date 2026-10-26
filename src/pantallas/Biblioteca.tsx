@@ -1,0 +1,99 @@
+import { useState, type FormEvent } from 'react'
+import { textos } from '../contenido.js'
+import { useJuego } from '../juego'
+import { mensajeError } from '../lib/errores'
+import { supabase } from '../lib/supabase'
+
+const MENSAJES: Record<string, string> = {
+  incorrecto: 'Código incorrecto. Pídele al equipo de la biblioteca que lo revise.',
+  espera: 'Demasiados intentos. Esperen unos minutos antes de volver a probar.',
+  faltan_paradas: 'Aún faltan paradas por completar.',
+  sin_codigo_configurado: 'La biblioteca aún no tiene un código configurado.',
+}
+
+export function Biblioteca() {
+  const { estado, refrescar } = useJuego()
+  const [personal, setPersonal] = useState(false)
+  const [codigo, setCodigo] = useState('')
+  const [enviando, setEnviando] = useState(false)
+  const [error, setError] = useState('')
+
+  async function activar(e: FormEvent) {
+    e.preventDefault()
+    if (!codigo.trim() || enviando) return
+    setError('')
+    setEnviando(true)
+    try {
+      const { data, error } = await supabase.rpc('activar_pasaporte', { p_codigo: codigo })
+      if (error) throw error
+      const r = (data as { resultado: string }).resultado
+      if (r === 'activado' || r === 'ya_activado') {
+        if ('vibrate' in navigator) navigator.vibrate?.([80, 60, 120])
+        await refrescar()
+        return
+      }
+      setError(MENSAJES[r] ?? 'No se pudo activar. Intenta de nuevo.')
+    } catch (err) {
+      setError(mensajeError(err))
+    } finally {
+      setEnviando(false)
+    }
+  }
+
+  return (
+    <main className="pantalla oscura" style={{ textAlign: 'center' }}>
+      <div className="centro" style={{ marginTop: 28 }}>
+        <div
+          className="aparece"
+          aria-hidden="true"
+          style={{ width: 120, height: 120, borderRadius: '50%', background: 'rgba(255,255,255,.14)', display: 'grid', placeItems: 'center', fontSize: 58 }}
+        >
+          🏛️
+        </div>
+      </div>
+      <h1 className="titulo" style={{ marginTop: 20 }}>
+        ¡Completaste las {estado?.total ?? 9} paradas!
+      </h1>
+      <p className="mut" style={{ fontSize: 16, marginTop: 10 }}>
+        {textos.bibliotecaInstrucciones}
+      </p>
+
+      {personal ? (
+        <form onSubmit={activar} className="tarjeta aparece" style={{ color: 'var(--ink)', textAlign: 'left', marginTop: 20 }}>
+          <label htmlFor="codigo-bib" className="etiqueta">
+            Código del equipo de la biblioteca
+          </label>
+          <input
+            id="codigo-bib"
+            className="entrada grande"
+            style={{ marginTop: 8, letterSpacing: 3 }}
+            autoComplete="off"
+            autoCorrect="off"
+            autoCapitalize="characters"
+            spellCheck={false}
+            enterKeyHint="done"
+            type="password"
+            value={codigo}
+            onChange={(e) => setCodigo(e.target.value)}
+            autoFocus
+          />
+          {error && (
+            <p className="aviso error" role="alert">
+              {error}
+            </p>
+          )}
+          <button className="btn dorado" style={{ marginTop: 12 }} disabled={enviando || !codigo.trim()}>
+            {enviando ? 'Activando…' : 'Activar pasaporte'}
+          </button>
+        </form>
+      ) : (
+        <div className="pie">
+          <button className="btn dorado" onClick={() => setPersonal(true)}>
+            Soy del equipo de la biblioteca
+          </button>
+          <small style={{ opacity: 0.85, fontWeight: 700 }}>Entrega tu celular al personal de la biblioteca.</small>
+        </div>
+      )}
+    </main>
+  )
+}

@@ -1,0 +1,15 @@
+node_modules
+dist
+dev-dist
+*.local
+.env
+.env.*
+!.env.example
+.vercel
+.DS_Store
+Thumbs.db
+coverage
+
+# Archivos privados: nunca al repositorio
+claves.json
+scripts/salida/

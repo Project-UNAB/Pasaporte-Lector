@@ -1,0 +1,86 @@
+.parada-cabeza {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.volver {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--g1);
+  color: var(--g7);
+  display: grid;
+  place-items: center;
+  text-decoration: none;
+  font-weight: 800;
+  font-size: 20px;
+}
+
+.minirruta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 34px;
+  margin: 12px 0 2px;
+  position: relative;
+}
+
+.minirruta::before {
+  content: '';
+  position: absolute;
+  left: 25%;
+  right: 25%;
+  top: 50%;
+  border-top: 3px dotted var(--g7);
+  z-index: 0;
+}
+
+.minirruta span {
+  position: relative;
+  z-index: 1;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: #b9c4c0;
+  color: #fff;
+  font-weight: 800;
+  font-family: var(--fuente-titulo);
+}
+
+.minirruta span.hecha {
+  background: var(--g7);
+}
+
+.minirruta span.actual {
+  background: var(--gold);
+  color: #3a2a00;
+  box-shadow: 0 0 0 5px rgba(234, 184, 60, 0.3);
+}
+
+.estado-ubicacion {
+  margin-top: 8px;
+  font-weight: 800;
+  font-size: 14px;
+  color: var(--sub);
+}
+
+.estado-ubicacion.ok {
+  color: var(--g7);
+}
+
+.tarjeta.suave {
+  background: var(--g1);
+  box-shadow: none;
+}
+
+.parada .pie {
+  align-items: stretch;
+}
+
+.parada .pie .reloj {
+  align-self: center;
+}

@@ -1,0 +1,39 @@
+.bienvenida {
+  align-items: center;
+  text-align: center;
+  padding-top: calc(56px + var(--arriba));
+}
+
+.bienvenida .libro {
+  width: 128px;
+  height: 128px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.14);
+  display: grid;
+  place-items: center;
+  font-size: 62px;
+}
+
+.bienvenida h1 {
+  font-size: clamp(34px, 11vw, 44px);
+  letter-spacing: 0.5px;
+  margin-top: 28px;
+  text-wrap: balance;
+}
+
+.bienvenida p {
+  opacity: 0.9;
+  margin-top: 12px;
+  font-weight: 700;
+  font-size: 17px;
+  max-width: 300px;
+}
+
+.bienvenida .pie {
+  width: 100%;
+}
+
+.bienvenida small {
+  opacity: 0.85;
+  font-weight: 700;
+}

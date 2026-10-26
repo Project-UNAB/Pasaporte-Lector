@@ -1,0 +1,139 @@
+/* El pasaporte es solo para ver: sin selección, sin menú de guardar imagen. */
+.pasaporte {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+.pasaporte .hoja {
+  border-radius: 16px;
+  background-color: #f3f1df;
+  background-image: repeating-radial-gradient(circle at 20% 120%, transparent 0 7px, rgba(47, 165, 126, 0.11) 7px 8px);
+  color: #0b3d34;
+  padding: 16px 14px 14px;
+  margin-top: 14px;
+  position: relative;
+  overflow: hidden;
+}
+
+.pasaporte .franja {
+  position: absolute;
+  inset: 0 0 auto;
+  height: 5px;
+  background: linear-gradient(90deg, var(--gold), var(--g5), var(--blue), var(--red));
+}
+
+.pasaporte h2 {
+  font-size: 12px;
+  letter-spacing: 1.6px;
+  text-transform: uppercase;
+  color: #0f6b57;
+  position: relative;
+}
+
+.pasaporte .marca {
+  position: absolute;
+  pointer-events: none;
+  opacity: 0.14;
+  background: center / contain no-repeat;
+  width: 150px;
+  height: 150px;
+}
+
+.pasaporte .marca.emoji {
+  display: grid;
+  place-items: center;
+  font-size: 110px;
+  filter: saturate(0.6);
+}
+
+.pasaporte .marca.derecha {
+  right: -18px;
+  bottom: -26px;
+}
+
+.pasaporte .marca.izquierda {
+  left: -22px;
+  top: -18px;
+}
+
+.pasaporte .datos {
+  display: flex;
+  gap: 14px;
+  margin-top: 10px;
+  position: relative;
+}
+
+.pasaporte .retrato {
+  width: 92px;
+  height: 116px;
+  flex: none;
+  border-radius: 10px;
+  border: 3px solid #fff;
+  background: var(--g2) center / cover no-repeat;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.pasaporte dl {
+  min-width: 0;
+}
+
+.pasaporte dt {
+  font-size: 11px;
+  font-weight: 700;
+  opacity: 0.75;
+}
+
+.pasaporte dd {
+  margin: 0 0 4px;
+  font-weight: 800;
+  font-size: 15px;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+
+.pasaporte .mrz {
+  font: 700 10px/1.35 ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  letter-spacing: 0.4px;
+  margin-top: 10px;
+  color: #35594f;
+  word-break: break-all;
+  position: relative;
+}
+
+.pasaporte .sellos {
+  display: flex;
+  justify-content: space-around;
+  gap: 8px;
+  margin-top: 12px;
+  position: relative;
+}
+
+.pasaporte .sellos.muchos {
+  flex-wrap: wrap;
+}
+
+.pasaporte .sello {
+  width: 84px;
+  height: 84px;
+  border-radius: 50%;
+  border: 3px solid currentColor;
+  display: grid;
+  place-content: center;
+  text-align: center;
+  font: 700 10.5px/1.15 var(--fuente-titulo);
+  text-transform: uppercase;
+  background: rgba(255, 255, 255, 0.35);
+}
+
+.pasaporte .sellos.muchos .sello {
+  width: 70px;
+  height: 70px;
+  font-size: 9px;
+}
+
+.pasaporte .sello b {
+  font-size: 24px;
+  display: block;
+  line-height: 1.1;
+}

@@ -1,0 +1,73 @@
+.tarjeta-cultural {
+  gap: 4px;
+}
+
+.tarjeta-cultural .chip {
+  align-self: flex-start;
+}
+
+.tarjeta-cultural.oscura {
+  align-items: center;
+  text-align: center;
+  padding-top: calc(48px + var(--arriba));
+}
+
+.tarjeta-cultural.oscura .chip {
+  align-self: center;
+  margin-top: 18px;
+}
+
+.tarjeta-cultural h1 {
+  font-size: clamp(26px, 8vw, 32px);
+  margin-top: 6px;
+  text-wrap: balance;
+}
+
+.tarjeta-cultural .texto {
+  font-size: 17px;
+  line-height: 1.55;
+  margin-top: 12px;
+  font-weight: 600;
+}
+
+.tarjeta-cultural.oscura .texto {
+  opacity: 0.92;
+}
+
+.tarjeta-cultural .tarjeta {
+  padding: 20px;
+  margin-top: 14px;
+}
+
+.tarjeta-cultural .autor {
+  color: var(--g5);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  font-size: 13px;
+}
+
+.festejo {
+  text-align: center;
+  font-family: var(--fuente-titulo);
+  font-weight: 600;
+  font-size: 20px;
+  color: var(--g7);
+  margin: 6px 0 14px;
+}
+
+.sello-grande {
+  width: 130px;
+  height: 130px;
+  border-radius: 50%;
+  border: 5px solid var(--gold);
+  display: grid;
+  place-items: center;
+  font-size: 60px;
+  transform: rotate(-8deg);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.tarjeta-cultural .pie {
+  width: 100%;
+}

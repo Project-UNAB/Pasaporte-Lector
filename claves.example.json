@@ -1,0 +1,15 @@
+{
+  "_nota": "Copiar como claves.json (privado, no se sube a GitHub) y poner las palabras reales de cada póster.",
+  "paradas": {
+    "b1-p1": "estrofa",
+    "b1-p2": "verso",
+    "b1-p3": "poesía",
+    "b2-p1": "escena",
+    "b2-p2": "acto",
+    "b2-p3": "telón",
+    "b3-p1": "novela",
+    "b3-p2": "capítulo",
+    "b3-p3": "relato"
+  },
+  "codigo_biblioteca": "CAMBIAR-ESTE-CODIGO"
+}
