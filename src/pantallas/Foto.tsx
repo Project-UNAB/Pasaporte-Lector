@@ -22,6 +22,17 @@ export function Foto() {
   }
 
   useEffect(() => detener, [])
+  // Si la persona cambia de app, apagar la cámara (en iPhone el indicador queda encendido).
+  useEffect(() => {
+    const alOcultar = () => {
+      if (document.visibilityState === 'hidden' && flujo.current) {
+        detener()
+        setFase((f) => (f === 'camara' ? 'consejos' : f))
+      }
+    }
+    document.addEventListener('visibilitychange', alOcultar)
+    return () => document.removeEventListener('visibilitychange', alOcultar)
+  }, [])
   useEffect(() => {
     if (fase === 'camara' && video.current && flujo.current) {
       video.current.srcObject = flujo.current

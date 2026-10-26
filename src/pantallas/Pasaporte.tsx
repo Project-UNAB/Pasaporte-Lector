@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { Link } from 'react-router'
 import { bloques, config, marcasDeAgua, paradas, textos } from '../contenido.js'
 import { useJuego } from '../juego'
 import { supabase } from '../lib/supabase'
@@ -15,10 +16,12 @@ function mrz(nombre: string, id: string, fecha: string) {
       .toUpperCase()
       .replace(/[^A-Z ]/g, '')
       .trim()
+  // Como en Colombia: 2 palabras = nombre + apellido, 3 = nombre + 2 apellidos, 4+ = 2 nombres + apellidos.
   const partes = limpiar(nombre).split(/\s+/)
-  const apellido = partes.length > 1 ? partes.slice(Math.ceil(partes.length / 2)).join('<') : partes[0]
-  const nombres = partes.length > 1 ? partes.slice(0, Math.ceil(partes.length / 2)).join('<') : ''
-  const l1 = `P<COL${apellido}<<${nombres}`.padEnd(36, '<').slice(0, 36)
+  const n = partes.length >= 4 ? 2 : 1
+  const apellidos = partes.length > 1 ? partes.slice(n).join('<') : partes[0]
+  const nombres = partes.length > 1 ? partes.slice(0, n).join('<') : ''
+  const l1 = `P<COL${apellidos}<<${nombres}`.padEnd(36, '<').slice(0, 36)
   const d = new Date(fecha)
   const dm = `${String(d.getDate()).padStart(2, '0')}${String(d.getMonth() + 1).padStart(2, '0')}`
   const l2 = `${id}<COL<<${dm}`.padEnd(35, '<').slice(0, 35) + (id.length % 10)
@@ -46,8 +49,15 @@ export default function Pasaporte() {
       : bloques.map((b) => ({ id: b.id, icono: b.icono, nombre: b.zona, fecha: fechaDe(b.paradas[b.paradas.length - 1].id) }))
   const [l1, l2] = mrz(p.nombre ?? '', p.id_estudiantil ?? '', p.activado_en ?? p.inicio)
 
+  // Una marca con `color` (la UNAB) usa su SVG como molde y se pinta con ese color.
   const marcaDeAgua = (clase: string) =>
-    marca.svg ? (
+    marca.svg && marca.color ? (
+      <div
+        className={`marca tenida ${clase}`}
+        style={{ backgroundColor: marca.color, WebkitMaskImage: `url(${marca.svg})`, maskImage: `url(${marca.svg})` }}
+        aria-hidden="true"
+      />
+    ) : marca.svg ? (
       <div className={`marca ${clase}`} style={{ backgroundImage: `url(${marca.svg})` }} aria-hidden="true" />
     ) : (
       <div className={`marca emoji ${clase}`} aria-hidden="true">
@@ -99,6 +109,23 @@ export default function Pasaporte() {
       <p className="mut" style={{ textAlign: 'center', marginTop: 14 }}>
         Marca de agua: {marca.nombre}
       </p>
+
+      <section className="lecturas" aria-label="Tus lecturas">
+        <h2>Tus lecturas</h2>
+        <ul>
+          {paradas.map((pa) => (
+            <li key={pa.id}>
+              <Link to={`/tarjeta/${pa.id}`}>
+                <span aria-hidden="true">{bloques[pa.bloqueIndice].icono}</span>
+                <span>
+                  <b>{pa.tarjeta.autor}</b>
+                  <small>{pa.tarjeta.titulo}</small>
+                </span>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </section>
     </main>
   )
 }

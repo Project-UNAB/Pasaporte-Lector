@@ -1,8 +1,11 @@
+/// <reference types="vitest/config" />
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 
 export default defineConfig({
+  // Las pruebas de punta a punta (tests/e2e) las corre Playwright, no Vitest.
+  test: { include: ['src/**/*.test.ts', 'scripts/**/*.test.mjs'] },
   plugins: [
     react(),
     VitePWA({

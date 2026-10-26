@@ -13,6 +13,8 @@ import { Tarjeta } from './pantallas/Tarjeta'
 import { Biblioteca } from './pantallas/Biblioteca'
 import { Bloqueado } from './pantallas/Bloqueado'
 import { SinConfigurar } from './pantallas/SinConfigurar'
+import { SinConexion } from './pantallas/SinConexion'
+import { AvisoConexion } from './componentes/AvisoConexion'
 
 const Mapa = lazy(() => import('./pantallas/Mapa'))
 const Parada = lazy(() => import('./pantallas/Parada'))
@@ -20,7 +22,7 @@ const Pasaporte = lazy(() => import('./pantallas/Pasaporte'))
 const Calibrar = lazy(() => import('./pantallas/Calibrar'))
 
 /** Pantalla a la que se envía a la persona según su etapa. */
-const INICIO: Record<Exclude<Etapa, 'cargando'>, string> = {
+const INICIO: Record<Exclude<Etapa, 'cargando' | 'sin_conexion'>, string> = {
   anonimo: '/',
   consentimiento: '/ingresar',
   datos: '/datos',
@@ -34,12 +36,11 @@ const INICIO: Record<Exclude<Etapa, 'cargando'>, string> = {
 function Solo({ etapas, children }: { etapas: Etapa[]; children: ReactNode }) {
   const { etapa } = useJuego()
   const { pathname } = useLocation()
+  if (etapas.includes(etapa)) return children
   if (etapa === 'cargando') return <Cargando />
-  if (!etapas.includes(etapa)) {
-    const destino = INICIO[etapa]
-    return destino === pathname ? null : <Navigate to={destino} replace />
-  }
-  return children
+  if (etapa === 'sin_conexion') return <SinConexion />
+  const destino = INICIO[etapa]
+  return destino === pathname ? null : <Navigate to={destino} replace />
 }
 
 export function App() {
@@ -55,15 +56,17 @@ export function App() {
   }
   return (
     <Suspense fallback={<Cargando />}>
+      <AvisoConexion />
       <Routes>
         <Route path="/" element={<Solo etapas={['anonimo']}><Bienvenida /></Solo>} />
         <Route path="/ingresar" element={<Solo etapas={['anonimo', 'consentimiento']}><Ingresar /></Solo>} />
-        <Route path="/codigo" element={<Solo etapas={['anonimo']}><Codigo /></Solo>} />
+        {/* Tras verificar el código, la pantalla sigue visible mientras se inicia la partida. */}
+        <Route path="/codigo" element={<Solo etapas={['anonimo', 'cargando']}><Codigo /></Solo>} />
         <Route path="/datos" element={<Solo etapas={['datos']}><Datos /></Solo>} />
         <Route path="/foto" element={<Solo etapas={['foto']}><Foto /></Solo>} />
         <Route path="/ubicacion" element={<Solo etapas={['juego']}><Ubicacion /></Solo>} />
         <Route path="/mapa" element={<Solo etapas={['juego']}><Mapa /></Solo>} />
-        <Route path="/parada/:id" element={<Solo etapas={['juego']}><Parada /></Solo>} />
+        <Route path="/parada/:id" element={<Solo etapas={['juego', 'biblioteca']}><Parada /></Solo>} />
         <Route path="/tarjeta/:id" element={<Solo etapas={['juego', 'biblioteca', 'pasaporte']}><Tarjeta /></Solo>} />
         <Route path="/biblioteca" element={<Solo etapas={['biblioteca']}><Biblioteca /></Solo>} />
         <Route path="/pasaporte" element={<Solo etapas={['pasaporte']}><Pasaporte /></Solo>} />

@@ -20,22 +20,9 @@
   --fuente: 'Nunito Variable', 'Nunito', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   --arriba: env(safe-area-inset-top, 0px);
   --abajo: env(safe-area-inset-bottom, 0px);
+  /* El juego tiene identidad propia (claro, como los mockups) aunque el celular esté en modo oscuro;
+     las pantallas oscuras (bienvenida, biblioteca, pasaporte) ya traen su propio fondo. */
   color-scheme: light;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme='light']) {
-    --bg: #082a24;
-    --paper: #0b3d34;
-    --card: #10493e;
-    --ink: #e3f6ec;
-    --sub: #9cc9b8;
-    --g1: #10493e;
-    --g2: #1d6a58;
-    --linea: rgba(227, 246, 236, 0.14);
-    --sombra: 0 3px 12px rgba(0, 0, 0, 0.35);
-    color-scheme: dark;
-  }
 }
 
 *,
@@ -52,6 +39,7 @@ html {
 }
 
 body {
+  min-height: 100vh;
   min-height: 100dvh;
   background: var(--bg);
   color: var(--ink);
@@ -63,6 +51,7 @@ body {
 }
 
 #root {
+  min-height: 100vh;
   min-height: 100dvh;
   display: flex;
   justify-content: center;
@@ -101,6 +90,7 @@ h3 {
 .pantalla {
   width: 100%;
   max-width: 480px;
+  min-height: 100vh;
   min-height: 100dvh;
   display: flex;
   flex-direction: column;
@@ -416,6 +406,20 @@ select.entrada {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
   }
+}
+
+.aviso-conexion {
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  right: 0;
+  top: 0;
+  padding: calc(8px + var(--arriba)) 16px 8px;
+  background: #8f2a1d;
+  color: #fff;
+  font-weight: 800;
+  font-size: 13px;
+  text-align: center;
 }
 
 .sr {

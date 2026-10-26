@@ -40,6 +40,12 @@
   height: 150px;
 }
 
+/* El SVG es el molde y el color de fondo es la tinta. */
+.pasaporte .marca.tenida {
+  -webkit-mask: center / contain no-repeat;
+  mask: center / contain no-repeat;
+}
+
 .pasaporte .marca.emoji {
   display: grid;
   place-items: center;
@@ -130,6 +136,48 @@
   width: 70px;
   height: 70px;
   font-size: 9px;
+}
+
+.pasaporte .lecturas {
+  margin-top: 22px;
+}
+
+.pasaporte .lecturas h2 {
+  color: var(--g2);
+}
+
+.pasaporte .lecturas ul {
+  list-style: none;
+  padding: 0;
+  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.pasaporte .lecturas a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  text-decoration: none;
+}
+
+.pasaporte .lecturas a > span:first-child {
+  font-size: 22px;
+}
+
+.pasaporte .lecturas b {
+  display: block;
+  font-size: 15px;
+}
+
+.pasaporte .lecturas small {
+  opacity: 0.8;
+  font-weight: 600;
 }
 
 .pasaporte .sello b {

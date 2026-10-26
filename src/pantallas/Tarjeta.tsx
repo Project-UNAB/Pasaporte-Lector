@@ -15,7 +15,9 @@ export function Tarjeta() {
   if (!parada || !paradaCompletada(estado, id)) return <Navigate to="/mapa" replace />
 
   const bloque = bloques[parada.bloqueIndice]
-  const cierraBloque = parada.indiceEnBloque === bloque.paradas.length - 1
+  // Desde el pasaporte solo se relee la tarjeta; el cierre de bloque es parte del recorrido.
+  const releyendo = etapa === 'pasaporte'
+  const cierraBloque = !releyendo && parada.indiceEnBloque === bloque.paradas.length - 1
   const esUltimo = parada.bloqueIndice === bloques.length - 1
 
   const seguir = () => navegar(etapa === 'pasaporte' ? '/pasaporte' : etapa === 'biblioteca' ? '/biblioteca' : '/mapa', { replace: true })
@@ -40,9 +42,11 @@ export function Tarjeta() {
 
   return (
     <main className="pantalla tarjeta-cultural clara">
-      <div className="festejo aparece" aria-hidden="true">
-        ✨ ¡Parada sellada! ✨
-      </div>
+      {!releyendo && (
+        <div className="festejo aparece" aria-hidden="true">
+          ✨ ¡Parada sellada! ✨
+        </div>
+      )}
       <span className="chip">
         {bloque.nombre} · Parada {parada.indiceEnBloque + 1} de {bloque.paradas.length}
       </span>
@@ -53,7 +57,7 @@ export function Tarjeta() {
       </article>
       <div className="pie">
         <button className="btn" onClick={() => (cierraBloque ? setVerFinal(true) : seguir())}>
-          {cierraBloque ? 'Cerrar el bloque' : 'Siguiente parada'}
+          {releyendo ? 'Volver al pasaporte' : cierraBloque ? 'Cerrar el bloque' : 'Siguiente parada'}
         </button>
       </div>
     </main>

@@ -44,6 +44,12 @@ scripts/cargar-claves.mjs       ← convierte claves.json (privado) en SQL con h
 5. **Authentication → Rate Limits**: subir “emails per hour” (por ejemplo a 100) para los picos frente a los pósters.
 6. **Authentication → Emails → Templates**: en **Magic Link** y en **Confirm signup** pegar `supabase/plantillas/codigo.html` (usa `{{ .Token }}`, así llega un código y no un enlace). Asunto sugerido: *Tu código de Pasaporte Lector*.
 7. **Authentication → URL Configuration**: poner el dominio final en *Site URL*.
+8. **Authentication → Hooks → Add hook → Before User Created**: tipo *Postgres Function*, esquema `public`, función `hook_antes_de_crear_usuario`. Rechaza otros dominios antes de crear el usuario o enviar el correo (el disparador sobre `auth.users` queda como segunda barrera).
+9. **Authentication → Sign In / Providers → Email**: confirmar que la longitud del código (*Email OTP Length*) sea 6.
+
+#### Pruebas de la base de datos
+
+Con Docker Desktop abierto: `npx supabase start` y luego `npx supabase test db` (pruebas pgTAP en `supabase/tests/`).
 
 ### 2. Palabras clave y código de la biblioteca
 
@@ -92,6 +98,8 @@ Abrir `https://<dominio>/calibrar` en el celular, pararse junto a cada póster, 
 
 ## Operación
 
+La guía para quien administra el juego (contenido, coordenadas, palabras, exportar datos, problemas frecuentes) está en [docs/GUIA-CLIENTE.md](docs/GUIA-CLIENTE.md).
+
 - **Exportar datos**: `supabase/consultas/exportar.sql` (IDs para Bienestar, datos completos y resumen). Ejecutar en el SQL Editor y descargar como CSV.
 - **Expirar en bloque (opcional)**: con la extensión `pg_cron` activada,
   `select cron.schedule('expirar', '*/15 * * * *', 'select public.expirar_vencidos()');`
@@ -107,6 +115,7 @@ Abrir `https://<dominio>/calibrar` en el celular, pararse junto a cada póster, 
 | `npm run build` | Revisión de tipos + build de producción |
 | `npm run preview` | Sirve el build localmente |
 | `npm test` | Pruebas unitarias |
+| `npm run e2e` | Pruebas de punta a punta en iPhone y Android simulados (ver [tests/e2e/README.md](tests/e2e/README.md)) |
 | `npm run claves` | Genera el SQL de palabras clave a partir de `claves.json` |
 | `npm run iconos` | Regenera los íconos de la PWA desde `public/icono.svg` |
 

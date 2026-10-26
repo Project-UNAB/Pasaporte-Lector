@@ -1,0 +1,45 @@
+# Configuración local para Supabase CLI (`supabase start` y `supabase test db`).
+project_id = "pasaporte-lector"
+
+[api]
+enabled = true
+port = 54321
+schemas = ["public"]
+extra_search_path = ["public", "extensions"]
+max_rows = 1000
+
+[db]
+port = 54322
+# Igual a la versión de los proyectos nuevos en Supabase.
+major_version = 17
+
+[db.seed]
+enabled = true
+sql_paths = ["./seed.sql"]
+
+[studio]
+enabled = true
+port = 54323
+
+[inbucket]
+enabled = true
+port = 54324
+
+[storage]
+enabled = true
+file_size_limit = "1MiB"
+
+[auth]
+enabled = true
+site_url = "http://localhost:5173"
+enable_signup = true
+
+[auth.email]
+enable_signup = true
+enable_confirmations = true
+otp_length = 6
+otp_expiry = 3600
+
+[auth.hook.before_user_created]
+enabled = true
+uri = "pg-functions://postgres/public/hook_antes_de_crear_usuario"

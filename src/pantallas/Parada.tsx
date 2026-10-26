@@ -1,5 +1,5 @@
 import { useMemo, useState, type FormEvent } from 'react'
-import { Link, Navigate, useNavigate, useParams } from 'react-router'
+import { Link, Navigate, useParams } from 'react-router'
 import { bloques, config, paradas } from '../contenido.js'
 import { MapaCampus } from '../componentes/MapaCampus'
 import { Reloj } from '../componentes/Reloj'
@@ -14,9 +14,8 @@ type Resultado = 'correcta' | 'incorrecta' | 'espera' | 'expirado' | 'fuera_de_o
 
 export default function Parada() {
   const { id = '' } = useParams()
-  const navegar = useNavigate()
   const { estado, aplicar, refrescar } = useJuego()
-  const { posicion } = useUbicacion()
+  const { posicion, error: errorUbicacion } = useUbicacion()
   const [cerca, setCerca] = useState(ignorarUbicacion)
   const [buscando, setBuscando] = useState(false)
   const [palabra, setPalabra] = useState('')
@@ -59,7 +58,6 @@ export default function Parada() {
       if (!pos) pos = await pedirPosicion().catch(() => null)
       if (pos && distanciaMetros(pos, parada!) <= radio) {
         setCerca(true)
-        setAviso({ tipo: 'ok', texto: '¡Ya estás aquí! Busca la palabra clave en el póster.' })
         return
       }
       await registrar('ubicacion_fallida', pos)
@@ -103,8 +101,9 @@ export default function Parada() {
       const r = (data as { resultado: Resultado }).resultado
       if (r === 'correcta') {
         if ('vibrate' in navigator) navigator.vibrate?.(60)
+        // Con el estado nuevo, la parada ya figura completada y esta pantalla redirige
+        // sola a su tarjeta (también en la novena, cuando la etapa pasa a biblioteca).
         await refrescar()
-        navegar(`/tarjeta/${id}`, { replace: true, state: { nueva: true } })
         return
       }
       if (r === 'incorrecta') setAviso({ tipo: 'error', texto: 'Esa no es la palabra. Mira bien el póster e intenta de nuevo.' })
@@ -148,7 +147,9 @@ export default function Parada() {
           {tecladoActivo
             ? '✅ Ya estás aquí'
             : distancia === null
-              ? '📡 Buscando tu ubicación…'
+              ? errorUbicacion?.code === 1
+                ? '🚫 La ubicación está bloqueada. Actívala en los ajustes del navegador o toca “Ya llegué” para pedir ayuda.'
+                : '📡 Buscando tu ubicación…'
               : distancia <= radio
                 ? '📍 Estás cerca. Toca “Ya llegué”.'
                 : `🚶 Estás a unos ${distancia} m`}

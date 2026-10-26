@@ -2,13 +2,11 @@ import { useEffect, useState, type FormEvent } from 'react'
 import { Navigate, useNavigate } from 'react-router'
 import { config } from '../contenido.js'
 import { Pasos } from '../componentes/Pasos'
-import { useJuego, type EstadoServidor } from '../juego'
 import { guardar, leer } from '../lib/almacen'
 import { mensajeError } from '../lib/errores'
 import { supabase } from '../lib/supabase'
 
 export function Codigo() {
-  const { aplicar } = useJuego()
   const navegar = useNavigate()
   const correo = leer('correo')
   const [codigo, setCodigo] = useState('')
@@ -34,14 +32,10 @@ export function Codigo() {
     setError('')
     setEnviando(true)
     try {
+      // Al verificar, el proveedor del juego inicia la partida y esta pantalla se reemplaza sola.
       const { error } = await supabase.auth.verifyOtp({ email: correo!, token: codigo.trim(), type: 'email' })
       if (error) throw error
-      const { data, error: err2 } = await supabase.rpc('iniciar_juego', {
-        p_consentimiento: leer('consentimiento') === 'si',
-      })
-      if (err2) throw err2
       guardar('codigoEnviado', null)
-      aplicar(data as EstadoServidor)
     } catch (err) {
       setError(mensajeError(err))
       setEnviando(false)

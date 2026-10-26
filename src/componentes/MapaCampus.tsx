@@ -39,6 +39,8 @@ export function MapaCampus({ completadas, actual, posicion, enfocar, alto = 260 
       className: 'mapa-gris',
       attribution: '© OpenStreetMap',
     }).addTo(m)
+    // En la vista general se ven todas las paradas; en una parada, se centra en ella.
+    if (!foco) m.fitBounds(L.latLngBounds(paradas.map((p) => [p.lat, p.lng] as L.LatLngTuple)), { padding: [24, 24], maxZoom: config.zoomMapa })
     capaParadas.current = L.layerGroup().addTo(m)
     mapa.current = m
     return () => {

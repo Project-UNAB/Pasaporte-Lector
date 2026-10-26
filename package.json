@@ -9,6 +9,7 @@
     "preview": "vite preview --host",
     "typecheck": "tsc -b",
     "test": "vitest run",
+    "e2e": "playwright test",
     "claves": "node scripts/cargar-claves.mjs",
     "iconos": "pwa-assets-generator"
   },
@@ -22,6 +23,7 @@
     "react-router": "^8.5.0"
   },
   "devDependencies": {
+    "@playwright/test": "^1.64.1",
     "@types/leaflet": "^1.9.22",
     "@types/node": "^26.6.5",
     "@types/react": "^19.3.0",

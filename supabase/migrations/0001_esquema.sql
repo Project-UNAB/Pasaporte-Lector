@@ -7,6 +7,14 @@
 
 create extension if not exists pgcrypto with schema extensions;
 
+-- Evita que objetos futuros en public queden expuestos por defecto a anon/public.
+alter default privileges in schema public revoke all on tables from public, anon, authenticated;
+alter default privileges in schema public revoke all on sequences from public, anon, authenticated;
+alter default privileges in schema public revoke execute on functions from public, anon, authenticated;
+alter default privileges for role postgres in schema public revoke all on tables from public, anon, authenticated;
+alter default privileges for role postgres in schema public revoke all on sequences from public, anon, authenticated;
+alter default privileges for role postgres in schema public revoke execute on functions from public, anon, authenticated;
+
 -- ─── Tablas ──────────────────────────────────────────────────────────────────
 
 do $$ begin
@@ -15,7 +23,7 @@ exception when duplicate_object then null; end $$;
 
 create table if not exists public.perfiles (
   usuario            uuid primary key references auth.users (id) on delete cascade,
-  correo             text not null unique,
+  correo             text not null unique check (correo = lower(btrim(correo)) and correo ~ '^[^\s@]+@unab\.edu\.co$'),
   nombre             text,
   id_estudiantil     text unique,
   carrera            text,
@@ -33,7 +41,7 @@ create table if not exists public.perfiles (
 create table if not exists public.progreso (
   usuario        uuid not null references public.perfiles (usuario) on delete cascade,
   parada         text not null,
-  posicion       smallint not null,
+  posicion       smallint not null check (posicion > 0),
   completado_en  timestamptz not null default now(),
   primary key (usuario, parada),
   unique (usuario, posicion)
@@ -66,7 +74,7 @@ create table if not exists public.config_privada (
   valor  text not null
 );
 
--- ─── Seguridad por filas ─────────────────────────────────────────────────────
+-- ─── Seguridad por filas y privilegios de tablas ─────────────────────────────
 
 alter table public.perfiles       enable row level security;
 alter table public.progreso       enable row level security;
@@ -82,19 +90,40 @@ drop policy if exists "progreso propio" on public.progreso;
 create policy "progreso propio" on public.progreso
   for select to authenticated using (usuario = (select auth.uid()));
 
--- Todo cambio pasa por las funciones de abajo.
-revoke insert, update, delete on public.perfiles, public.progreso from anon, authenticated;
-revoke all on public.intentos, public.claves_paradas, public.config_privada from anon, authenticated;
+-- Todo cambio pasa por las funciones del servidor; anon no lee ni escribe nada.
+revoke all on all tables in schema public from public, anon, authenticated;
+revoke all on all sequences in schema public from public, anon, authenticated;
+grant select on public.perfiles, public.progreso to authenticated;
 
--- ─── Solo correos @unab.edu.co (validado en el servidor) ─────────────────────
+-- ─── Solo correos @unab.edu.co (Auth Hook + disparador en auth.users) ────────
 
+-- 1) Auth Hook "Before User Created": rechaza el registro antes de crear el
+--    usuario o enviar el OTP, devolviendo un error 400 claro a la web.
+create or replace function public.hook_antes_de_crear_usuario(event jsonb)
+returns jsonb language plpgsql security definer set search_path = '' as $$
+declare
+  v_correo text := lower(btrim(coalesce(event->'user'->>'email', '')));
+begin
+  if v_correo !~ '^[^\s@]+@unab\.edu\.co$' then
+    return jsonb_build_object(
+      'error', jsonb_build_object(
+        'http_code', 400,
+        'message', 'Solo se permiten correos @unab.edu.co'
+      )
+    );
+  end if;
+  return '{}'::jsonb;
+end $$;
+
+-- 2) Defensa en profundidad en la tabla auth.users: protege inserciones directas,
+--    cambios de correo (UPDATE) y el caso en que el Hook aún no esté activo.
 create or replace function public.validar_dominio_correo()
 returns trigger language plpgsql security definer set search_path = '' as $$
 begin
-  if new.email is null or lower(trim(new.email)) not like '%@unab.edu.co' then
+  if new.email is null or lower(btrim(new.email)) !~ '^[^\s@]+@unab\.edu\.co$' then
     raise exception 'Solo se permiten correos @unab.edu.co' using errcode = 'P0001';
   end if;
-  new.email := lower(trim(new.email));
+  new.email := lower(btrim(new.email));
   return new;
 end $$;
 
@@ -169,13 +198,16 @@ declare
   v_inicio timestamptz;
 begin
   if v_uid is null then raise exception 'no_autenticado'; end if;
+  -- Serializa llamadas simultáneas del mismo usuario para no duplicar perfil.
+  perform pg_advisory_xact_lock(hashtextextended(v_uid::text, 0));
   if not exists (select 1 from public.perfiles where usuario = v_uid) then
     if not coalesce(p_consentimiento, false) then
       raise exception 'consentimiento_requerido' using errcode = 'P0001';
     end if;
-    select lower(email), coalesce(email_confirmed_at, now())
+    select lower(btrim(email)), coalesce(email_confirmed_at, now())
       into v_correo, v_inicio
       from auth.users where id = v_uid;
+    if v_correo is null then raise exception 'no_autenticado'; end if;
     insert into public.perfiles (usuario, correo, consentimiento_en, inicio, vence, marca_agua)
     values (v_uid, v_correo, now(), v_inicio, v_inicio + interval '24 hours',
             1 + floor(random() * 20)::int)
@@ -194,7 +226,7 @@ declare
 begin
   if v_uid is null then raise exception 'no_autenticado'; end if;
   perform public._expirar(v_uid);
-  if not exists (select 1 from public.perfiles where usuario = v_uid and estado = 'activo') then
+  if not exists (select 1 from public.perfiles where usuario = v_uid and estado = 'activo' for update) then
     raise exception 'juego_no_activo' using errcode = 'P0001';
   end if;
   if exists (select 1 from public.progreso where usuario = v_uid) then
@@ -221,6 +253,13 @@ declare
   v_path text := v_uid::text || '/foto.jpg';
 begin
   if v_uid is null then raise exception 'no_autenticado'; end if;
+  perform public._expirar(v_uid);
+  if not exists (select 1 from public.perfiles where usuario = v_uid and estado = 'activo' for update) then
+    raise exception 'juego_no_activo' using errcode = 'P0001';
+  end if;
+  if exists (select 1 from public.progreso where usuario = v_uid) then
+    raise exception 'datos_bloqueados' using errcode = 'P0001';
+  end if;
   if not exists (select 1 from storage.objects where bucket_id = 'fotos' and name = v_path) then
     raise exception 'foto_no_encontrada' using errcode = 'P0001';
   end if;
@@ -242,6 +281,10 @@ begin
   if not exists (select 1 from public.claves_paradas where parada = p_parada) then
     raise exception 'parada_invalida' using errcode = 'P0001';
   end if;
+  perform 1 from public.perfiles where usuario = v_uid for update;
+  if not found then
+    raise exception 'juego_no_activo' using errcode = 'P0001';
+  end if;
   if (select count(*) from public.intentos
        where usuario = v_uid and creado_en > now() - interval '1 minute') >= 30 then
     raise exception 'demasiados_intentos' using errcode = 'P0001';
@@ -262,10 +305,16 @@ declare
   v_ok boolean;
 begin
   if v_uid is null then raise exception 'no_autenticado'; end if;
-  perform public._expirar(v_uid);
 
+  -- Bloquea la fila del perfil antes de evaluar vencimiento, orden e intentos.
   select * into v_perfil from public.perfiles where usuario = v_uid for update;
   if not found then return json_build_object('resultado', 'sin_perfil'); end if;
+
+  if v_perfil.estado = 'activo' and v_perfil.finalizado_en is null and now() >= v_perfil.vence then
+    update public.perfiles set estado = 'expirado' where usuario = v_uid
+    returning * into v_perfil;
+  end if;
+
   if v_perfil.estado = 'expirado' then return json_build_object('resultado', 'expirado'); end if;
   if v_perfil.finalizado_en is not null then return json_build_object('resultado', 'ya_finalizado'); end if;
   if v_perfil.nombre is null or v_perfil.foto_path is null then
@@ -298,7 +347,13 @@ begin
 
   if not v_ok then return json_build_object('resultado', 'incorrecta'); end if;
 
-  insert into public.progreso (usuario, parada, posicion) values (v_uid, p_parada, v_clave.posicion);
+  insert into public.progreso (usuario, parada, posicion)
+  values (v_uid, p_parada, v_clave.posicion)
+  on conflict do nothing;
+  if not found then
+    return json_build_object('resultado', 'ya_completada');
+  end if;
+
   if v_clave.posicion = public._total_paradas() then
     update public.perfiles set finalizado_en = now() where usuario = v_uid;
   end if;
@@ -315,12 +370,22 @@ declare
   v_hash text;
 begin
   if v_uid is null then raise exception 'no_autenticado'; end if;
-  perform public._expirar(v_uid);
 
   select * into v_perfil from public.perfiles where usuario = v_uid for update;
   if not found then return json_build_object('resultado', 'sin_perfil'); end if;
+
+  if v_perfil.estado = 'activo' and v_perfil.finalizado_en is null and now() >= v_perfil.vence then
+    update public.perfiles set estado = 'expirado' where usuario = v_uid
+    returning * into v_perfil;
+  end if;
+
   if v_perfil.activado_en is not null then return json_build_object('resultado', 'ya_activado'); end if;
-  if v_perfil.finalizado_en is null then return json_build_object('resultado', 'faltan_paradas'); end if;
+  if v_perfil.estado = 'expirado' then return json_build_object('resultado', 'faltan_paradas'); end if;
+  if v_perfil.finalizado_en is null
+     or (select count(*) from public.progreso where usuario = v_uid) < public._total_paradas()
+     or public._total_paradas() = 0 then
+    return json_build_object('resultado', 'faltan_paradas');
+  end if;
 
   if (select count(*) from public.intentos
        where usuario = v_uid and tipo = 'codigo_incorrecto'
@@ -363,8 +428,13 @@ grant execute on function
   public.enviar_palabra(text, text, double precision, double precision, real),
   public.activar_pasaporte(text)
 to authenticated;
--- El disparador de dominio lo ejecuta el servicio de autenticación.
-grant execute on function public.validar_dominio_correo() to supabase_auth_admin;
+
+-- El servicio de autenticación ejecuta el Hook y el disparador de dominio.
+grant usage on schema public to supabase_auth_admin;
+grant execute on function
+  public.hook_antes_de_crear_usuario(jsonb),
+  public.validar_dominio_correo()
+to supabase_auth_admin;
 
 -- ─── Fotos: bucket privado, cada persona sube y ve solo la suya ──────────────
 
@@ -376,18 +446,33 @@ on conflict (id) do update
 
 drop policy if exists "fotos: ver la propia" on storage.objects;
 create policy "fotos: ver la propia" on storage.objects for select to authenticated
-  using (bucket_id = 'fotos' and (storage.foldername(name))[1] = (select auth.uid()::text));
+  using (
+    bucket_id = 'fotos'
+    and (storage.foldername(name))[1] = (select auth.uid()::text)
+    and name = (select auth.uid()::text) || '/foto.jpg'
+  );
 
 -- Solo se puede subir o cambiar la foto antes de completar la primera parada.
 drop policy if exists "fotos: subir la propia" on storage.objects;
 create policy "fotos: subir la propia" on storage.objects for insert to authenticated
-  with check (bucket_id = 'fotos'
+  with check (
+    bucket_id = 'fotos'
     and (storage.foldername(name))[1] = (select auth.uid()::text)
-    and not exists (select 1 from public.progreso g where g.usuario = (select auth.uid())));
+    and name = (select auth.uid()::text) || '/foto.jpg'
+    and not exists (select 1 from public.progreso g where g.usuario = (select auth.uid()))
+  );
 
 drop policy if exists "fotos: reemplazar la propia" on storage.objects;
 create policy "fotos: reemplazar la propia" on storage.objects for update to authenticated
-  using (bucket_id = 'fotos' and (storage.foldername(name))[1] = (select auth.uid()::text))
-  with check (bucket_id = 'fotos'
+  using (
+    bucket_id = 'fotos'
     and (storage.foldername(name))[1] = (select auth.uid()::text)
-    and not exists (select 1 from public.progreso g where g.usuario = (select auth.uid())));
+    and name = (select auth.uid()::text) || '/foto.jpg'
+    and not exists (select 1 from public.progreso g where g.usuario = (select auth.uid()))
+  )
+  with check (
+    bucket_id = 'fotos'
+    and (storage.foldername(name))[1] = (select auth.uid()::text)
+    and name = (select auth.uid()::text) || '/foto.jpg'
+    and not exists (select 1 from public.progreso g where g.usuario = (select auth.uid()))
+  );

@@ -1,5 +1,6 @@
-import { createContext, use, useCallback, useEffect, useMemo, useState, type ReactNode } from 'react'
+import { createContext, use, useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import type { Session } from '@supabase/supabase-js'
+import { guardar, leer } from './lib/almacen'
 import { supabase, supabaseConfigurado } from './lib/supabase'
 import { paradas } from './contenido.js'
 
@@ -34,7 +35,17 @@ export interface EstadoServidor {
 }
 
 /** En qué etapa está la persona; decide qué pantallas puede ver. */
-export type Etapa = 'cargando' | 'anonimo' | 'consentimiento' | 'datos' | 'foto' | 'juego' | 'biblioteca' | 'pasaporte' | 'bloqueado'
+export type Etapa =
+  | 'cargando'
+  | 'sin_conexion'
+  | 'anonimo'
+  | 'consentimiento'
+  | 'datos'
+  | 'foto'
+  | 'juego'
+  | 'biblioteca'
+  | 'pasaporte'
+  | 'bloqueado'
 
 interface Juego {
   sesion: Session | null
@@ -44,6 +55,7 @@ interface Juego {
   desfase: number
   refrescar: () => Promise<EstadoServidor | null>
   aplicar: (e: EstadoServidor) => void
+  reintentar: () => void
   salir: () => Promise<void>
 }
 
@@ -55,10 +67,10 @@ export function useJuego(): Juego {
   return j
 }
 
-function calcularEtapa(cargando: boolean, sesion: Session | null, e: EstadoServidor | null): Etapa {
+function calcularEtapa(cargando: boolean, fallo: boolean, sesion: Session | null, e: EstadoServidor | null): Etapa {
   if (cargando) return 'cargando'
   if (!sesion) return 'anonimo'
-  if (!e) return 'cargando'
+  if (!e) return fallo ? 'sin_conexion' : 'cargando'
   const p = e.perfil
   if (!p) return 'consentimiento'
   if (p.activado_en) return 'pasaporte'
@@ -73,16 +85,24 @@ export function ProveedorJuego({ children }: { children: ReactNode }) {
   const [sesion, setSesion] = useState<Session | null>(null)
   const [estado, setEstado] = useState<EstadoServidor | null>(null)
   const [cargando, setCargando] = useState(supabaseConfigurado)
+  const [fallo, setFallo] = useState(false)
   const [desfase, setDesfase] = useState(0)
 
   const aplicar = useCallback((e: EstadoServidor) => {
     setEstado(e)
+    setFallo(false)
     setDesfase(Date.parse(e.ahora) - Date.now())
   }, [])
 
+  // Recién verificado el correo, iniciar_juego crea el perfil y arranca el reloj;
+  // después es igual a estado_juego, así que repetirlo no cambia nada.
   const refrescar = useCallback(async () => {
-    const { data, error } = await supabase.rpc('estado_juego')
+    const consiente = leer('consentimiento') === 'si'
+    const { data, error } = consiente
+      ? await supabase.rpc('iniciar_juego', { p_consentimiento: true })
+      : await supabase.rpc('estado_juego')
     if (error) throw error
+    if (consiente) guardar('consentimiento', null)
     aplicar(data as EstadoServidor)
     return data as EstadoServidor
   }, [aplicar])
@@ -90,11 +110,10 @@ export function ProveedorJuego({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (!supabaseConfigurado) return
     let vivo = true
-    supabase.auth.getSession().then(async ({ data }) => {
+    supabase.auth.getSession().then(({ data }) => {
       if (!vivo) return
       setSesion(data.session)
-      if (data.session) await refrescar().catch(() => setEstado(null))
-      if (vivo) setCargando(false)
+      setCargando(false)
     })
     const { data: sub } = supabase.auth.onAuthStateChange((evento, s) => {
       setSesion(s)
@@ -104,26 +123,53 @@ export function ProveedorJuego({ children }: { children: ReactNode }) {
       vivo = false
       sub.subscription.unsubscribe()
     }
-  }, [refrescar])
+  }, [])
+
+  // Con sesión y sin estado (al abrir la web o recién verificado el correo), pedirlo al servidor.
+  // El candado evita pedirlo dos veces a la vez (al abrir llegan varios avisos seguidos).
+  const pidiendo = useRef(false)
+  useEffect(() => {
+    if (cargando || !sesion || estado || fallo || pidiendo.current) return
+    pidiendo.current = true
+    refrescar()
+      .catch(() => setFallo(true))
+      .finally(() => (pidiendo.current = false))
+  }, [cargando, sesion, estado, fallo, refrescar])
 
   // Al volver a la pestaña, sincroniza con el servidor (reloj y progreso).
   useEffect(() => {
-    if (!sesion) return
+    if (!sesion || !estado) return
     const alVolver = () => {
-      if (document.visibilityState === 'visible') refrescar().catch(() => {})
+      if (document.visibilityState !== 'visible' || pidiendo.current) return
+      pidiendo.current = true
+      refrescar()
+        .catch(() => {})
+        .finally(() => (pidiendo.current = false))
     }
     document.addEventListener('visibilitychange', alVolver)
     return () => document.removeEventListener('visibilitychange', alVolver)
-  }, [sesion, refrescar])
+  }, [sesion, estado, refrescar])
 
   const salir = useCallback(async () => {
     await supabase.auth.signOut()
     setEstado(null)
+    setFallo(false)
   }, [])
 
+  const reintentar = useCallback(() => setFallo(false), [])
+
   const valor = useMemo<Juego>(
-    () => ({ sesion, estado, etapa: calcularEtapa(cargando, sesion, estado), desfase, refrescar, aplicar, salir }),
-    [sesion, estado, cargando, desfase, refrescar, aplicar, salir],
+    () => ({
+      sesion,
+      estado,
+      etapa: calcularEtapa(cargando, fallo, sesion, estado),
+      desfase,
+      refrescar,
+      aplicar,
+      reintentar,
+      salir,
+    }),
+    [sesion, estado, cargando, fallo, desfase, refrescar, aplicar, reintentar, salir],
   )
 
   return <Contexto value={valor}>{children}</Contexto>

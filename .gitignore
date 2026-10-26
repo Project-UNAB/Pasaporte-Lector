@@ -13,3 +13,13 @@ coverage
 # Archivos privados: nunca al repositorio
 claves.json
 scripts/salida/
+
+# Archivos locales de Supabase CLI
+supabase/.temp/
+supabase/.branches/
+
+# Pruebas de punta a punta
+dist-e2e/
+test-results/
+playwright-report/
+blob-report/

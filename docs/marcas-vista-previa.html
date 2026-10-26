@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pasaporte Lector · Vista previa de marcas de agua</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@500;700;800&display=swap">
+<style>
+:root {
+  --bg: #0b3d34;
+  --panel: #06231e;
+  --card: #ffffff;
+  --paper: #f3f1df;
+  --ink: #0b3d34;
+  --sub: #4f7d70;
+  --g5: #2fa57e;
+  --g7: #0f6b57;
+  --g2: #bfe8d6;
+  --gold: #eab83c;
+  --red: #d9503f;
+  --blue: #2c6fb3;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  color: #e3f6ec;
+  font-family: 'Nunito', system-ui, sans-serif;
+  padding: 32px 20px 60px;
+}
+header {
+  text-align: center;
+  max-width: 900px;
+  margin: 0 auto 36px;
+}
+h1 {
+  font-family: 'Fredoka', system-ui, sans-serif;
+  font-size: clamp(28px, 4vw, 42px);
+  color: #ffffff;
+  margin-bottom: 8px;
+}
+p.sub {
+  color: #a9ddc5;
+  font-size: 16px;
+  max-width: 680px;
+  margin: 0 auto 18px;
+}
+.legend {
+  display: inline-flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.08);
+  padding: 10px 20px;
+  border-radius: 30px;
+  font-size: 13.5px;
+  color: #eaf8f1;
+}
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  gap: 24px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+.card {
+  background: #ffffff;
+  color: var(--ink);
+  border-radius: 20px;
+  padding: 18px 20px;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.25);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  border-bottom: 2px solid #eaf8f1;
+  padding-bottom: 10px;
+}
+.card-title {
+  font-family: 'Fredoka', system-ui, sans-serif;
+  font-size: 19px;
+  color: var(--g7);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.card-id {
+  font-weight: 800;
+  font-size: 13px;
+  color: var(--sub);
+  background: var(--g2);
+  padding: 3px 8px;
+  border-radius: 12px;
+}
+.comparativa {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  align-items: stretch;
+}
+.vista-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 8px;
+}
+.vista-label {
+  font-size: 11.5px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--sub);
+}
+.frame-normal {
+  width: 100%;
+  aspect-ratio: 1;
+  max-width: 150px;
+  background: #fcfdfa;
+  border: 1.5px solid #d5ece0;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  padding: 8px;
+}
+.frame-normal img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.frame-normal .emoji-placeholder {
+  font-size: 64px;
+}
+.frame-pasaporte {
+  width: 150px;
+  height: 150px;
+  background-color: var(--paper);
+  background-image: repeating-radial-gradient(circle at 20% 120%, transparent 0 7px, rgba(47, 165, 126, 0.11) 7px 8px);
+  border: 1.5px solid #d9e3d0;
+  border-radius: 14px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.05);
+}
+.watermark-layer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.14;
+  background-position: center;
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+.watermark-layer.emoji {
+  display: grid;
+  place-items: center;
+  font-size: 80px;
+  filter: saturate(0.6);
+}
+.sim-datos {
+  position: absolute;
+  inset: 0;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  font-size: 10px;
+  font-weight: 700;
+  color: #0b3d34;
+  pointer-events: none;
+}
+.sim-datos b {
+  font-family: 'Fredoka', sans-serif;
+  font-size: 11px;
+  color: #0f6b57;
+}
+.sim-mrz {
+  font: 700 7px/1.2 monospace;
+  letter-spacing: 0.3px;
+  color: #35594f;
+  word-break: break-all;
+}
+.badge-unab {
+  font-size: 11.5px;
+  background: #fef4dc;
+  color: #8c6005;
+  border: 1px dashed #eab83c;
+  padding: 6px 10px;
+  border-radius: 8px;
+  text-align: center;
+  font-weight: 700;
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Colección de Marcas de Agua</h1>
+  <p class="sub">Validación visual de las 20 marcas para el Pasaporte Lector. Cada ficha muestra el diseño original a tamaño normal y su comportamiento real en el pasaporte (150×150 px, opacidad 0.14, fondo de seguridad #f3f1df).</p>
+  <div class="legend">
+    <span><i class="dot" style="background:var(--g5)"></i> 19 ilustraciones vectoriales terminadas</span>
+    <span><i class="dot" style="background:var(--gold)"></i> 1 marca institucional (#13 UNAB)</span>
+    <span><i class="dot" style="background:var(--blue)"></i> Fondo guilloché de seguridad</span>
+  </div>
+</header>
+
+<main class="grid">
+
+  <!-- 01 Rana dorada -->
+  <article class="card">
+    <div class="card-header">
+      <div class="card-title">🐸 01 · Rana dorada</div>
+      <span class="card-id">01.svg</span>
+    </div>
+    <div class="comparativa">
+      <div class="vista-box">
+        <span class="vista-label">Normal (100%)</span>
+        <div class="frame-normal"><img src="../public/marcas/01.svg" alt="Rana dorada"></div>
+      </div>
+      <div class="vista-box">
+        <span class="vista-label">Pasaporte (150px · 14%)</span>
+        <div class="frame-pasaporte">
+          <div class="watermark-layer" style="background-image:url('../public/marcas/01.svg')"></div>
+          <div class="sim-datos">
+            <div><b>REPÚBLICA DE LA LECTURA</b><br>Laura Gómez<br>ID: 20231045</div>
+            <div class="sim-mrz">P&lt;COL&lt;GOMEZ&lt;&lt;LAURA&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;<br>20231045&lt;COL&lt;&lt;0610&lt;&lt;&lt;&lt;&lt;&lt;9</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <!-- 02 Colibrí -->
+  <article class="card">
+    <div class="card-header">
+      <div class="card-title">🐦 02 · Colibrí</div>
+      <span class="card-id">02.svg</span>
+    </div>
+    <div class="comparativa">
+      <div class="vista-box">
+        <span class="vista-label">Normal (100%)</span>
+        <div class="frame-normal"><img src="../public/marcas/02.svg" alt="Colibrí"></div>
+      </div>
+      <div class="vista-box">
+        <span class="vista-label">Pasaporte (150px · 14%)</span>
+        <div class="frame-pasaporte">
+          <div class="watermark-layer" style="background-image:url('../public/marcas/02.svg')"></div>
+          <div class="sim-datos">
+            <div><b>REPÚBLICA DE LA LECTURA</b><br>Mateo Silva<br>ID: 20241012</div>
+            <div class="sim-mrz">P&lt;COL&lt;SILVA&lt;&lt;MATEO&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;<br>20241012&lt;COL&lt;&lt;0610&lt;&lt;&lt;&lt;&lt;&lt;2</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <!-- 03 Palma de cera -->
+  <article class="card">
+    <div class="card-header">
+      <div class="card-title">🌴 03 · Palma de cera</div>
+      <span class="card-id">03.svg</span>
+    </div>
+    <div class="comparativa">
+      <div class="vista-box">
+        <span class="vista-label">Normal (100%)</span>
+        <div class="frame-normal"><img src="../public/marcas/03.svg" alt="Palma de cera"></div>
+      </div>
+      <div class="vista-box">
+        <span class="vista-label">Pasaporte (150px · 14%)</span>
+        <div class="frame-pasaporte">
+          <div class="watermark-layer" style="background-image:url('../public/marcas/03.svg')"></div>
+          <div class="sim-datos">
+            <div><b>REPÚBLICA DE LA LECTURA</b><br>Sofía Díaz<br>ID: 20221890</div>
+            <div class="sim-mrz">P&lt;COL&lt;DIAZ&lt;&lt;SOFIA&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;<br>20221890&lt;COL&lt;&lt;0610&lt;&lt;&lt;&lt;&lt;&lt;0</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <!-- 04 Tortuga marina -->
+  <article class="card">
+    <div class="card-header">
+      <div class="card-title">🐢 04 · Tortuga marina</div>
+      <span class="card-id">04.svg</span>
+    </div>
+    <div class="comparativa">
+      <div class="vista-box">
+        <span class="vista-label">Normal (100%)</span>
+        <div class="frame-normal"><img src="../public/marcas/04.svg" alt="Tortuga marina"></div>
+      </div>
+      <div class="vista-box">
+        <span class="vista-label">Pasaporte (150px · 14%)</span>
+        <div class="frame-pasaporte">
+          <div class="watermark-layer" style="background-image:url('../public/marcas/04.svg')"></div>
+          <div class="sim-datos">
+            <div><b>REPÚBLICA DE LA LECTURA</b><br>Carlos Reyes<br>ID: 20231543</div>
+            <div class="sim-mrz">P&lt;COL&lt;REYES&lt;&lt;CARLOS&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;<br>20231543&lt;COL&lt;&lt;0610&lt;&lt;&lt;&lt;&lt;&lt;3</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <!-- 05 Cóndor de los Andes -->
+  <article class="card">
+    <div class="card-header">
+      <div class="card-title">🦅 05 · Cóndor de los Andes</div>
+      <span class="card-id">05.svg</span>
+    </div>
+    <div class="comparativa">
+      <div class="vista-box">
+        <span class="vista-label">Normal (100%)</span>
+        <div class="frame-normal"><img src="../public/marcas/05.svg" alt="Cóndor de los Andes"></div>
+      </div>
+      <div class="vista-box">
+        <span class="vista-label">Pasaporte (150px · 14%)</span>
+        <div class="frame-pasaporte">
+          <div class="watermark-layer" style="background-image:url('../public/marcas/05.svg')"></div>
+          <div class="sim-datos">
+            <div><b>REPÚBLICA DE LA LECTURA</b><br>Valentina Ruiz<br>ID: 20241872</div>
+            <div class="sim-mrz">P&lt;COL&lt;RUIZ&lt;&lt;VALENTINA&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;<br>20241872&lt;COL&lt;&lt;0610&lt;&lt;&lt;&lt;&lt;&lt;2</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <!-- 06 Chigüiro -->
+  <article class="card">
+    <div class="card-header">
+      <div class="card-title">🦫 06 · Chigüiro</div>
+      <span class="card-id">06.svg</span>
+    </div>
+    <div class="comparativa">
+      <div class="vista-box">
+        <span class="vista-label">Normal (100%)</span>
+        <div class="frame-normal"><img src="../public/marcas/06.svg" alt="Chigüiro"></div>
+      </div>
+      <div class="vista-box">
+        <span class="vista-label">Pasaporte (150px · 14%)</span>
+        <div class="frame-pasaporte">
+          <div class="watermark-layer" style="background-image:url('../public/marcas/06.svg')"></div>
+          <div class="sim-datos">
+            <div><b>REPÚBLICA DE LA LECTURA</b><br>Daniel Castro<br>ID: 20211904</div>
+            <div class="sim-mrz">P&lt;COL&lt;CASTRO&lt;&lt;DANIEL&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;<br>20211904&lt;COL&lt;&lt;0610&lt;&lt;&lt;&lt;&lt;&lt;4</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <!-- 07 Tigrillo -->
+  <article class="card">
+    <div class="card-header">
+      <div class="card-title">🐆 07 · Tigrillo</div>
+      <span class="card-id">07.svg</span>
+    </div>
+    <div class="comparativa">
+      <div class="vista-box">
+        <span class="vista-label">Normal (100%)</span>
+        <div class="frame-normal"><img src="../public/marcas/07.svg" alt="Tigrillo"></div>
+      </div>
+      <div class="vista-box">
+        <span class="vista-label">Pasaporte (150px · 14%)</span>
+        <div class="frame-pasaporte">
+          <div class="watermark-layer" style="background-image:url('../public/marcas/07.svg')"></div>
+          <div class="sim-datos">
+            <div><b>REPÚBLICA DE LA LECTURA</b><br>Camila Torres<br>ID: 20221345</div>
+            <div class="sim-mrz">P&lt;COL&lt;TORRES&lt;&lt;CAMILA&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;<br>20221345&lt;COL&lt;&lt;0610&lt;&lt;&lt;&lt;&lt;&lt;5</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <!-- 08 Oso de anteojos -->
+  <article class="card">
+    <div class="card-header">
+      <div class="card-title">🐻 08 · Oso de anteojos</div>
+      <span class="card-id">08.svg</span>
+    </div>
+    <div class="comparativa">
+      <div class="vista-box">
+        <span class="vista-label">Normal (100%)</span>
+        <div class="frame-normal"><img src="../public/marcas/08.svg" alt="Oso de anteojos"></div>
+      </div>
+      <div class="vista-box">
+        <span class="vista-label">Pasaporte (150px · 14%)</span>
+        <div class="frame-pasaporte">
+          <div class="watermark-layer" style="background-image:url('../public/marcas/08.svg')"></div>
+          <div class="sim-datos">
+            <div><b>REPÚBLICA DE LA LECTURA</b><br>Andrés Peña<br>ID: 20231678</div>
+            <div class="sim-mrz">P&lt;COL&lt;PENA&lt;&lt;ANDRES&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;<br>20231678&lt;COL&lt;&lt;0610&lt;&lt;&lt;&lt;&lt;&lt;8</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <!-- 09 Delfín rosado -->
+  <article class="card">
+    <div class="card-header">
+      <div class="card-title">🐬 09 · Delfín rosado</div>
+      <span class="card-id">09.svg</span>
+    </div>
+    <div class="comparativa">
+      <div class="vista-box">
+        <span class="vista-label">Normal (100%)</span>
+        <div class="frame-normal"><img src="../public/marcas/09.svg" alt="Delfín rosado"></div>
+      </div>
+      <div class="vista-box">
+        <span class="vista-label">Pasaporte (150px · 14%)</span>
+        <div class="frame-pasaporte">
+          <div class="watermark-layer" style="background-image:url('../public/marcas/09.svg')"></div>
+          <div class="sim-datos">
+            <div><b>REPÚBLICA DE LA LECTURA</b><br>Juliana Mora<br>ID: 20241432</div>
+            <div class="sim-mrz">P&lt;COL&lt;MORA&lt;&lt;JULIANA&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;<br>20241432&lt;COL&lt;&lt;0610&lt;&lt;&lt;&lt;&lt;&lt;2</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <!-- 10 Frailejón -->
+  <article class="card">
+    <div class="card-header">
+      <div class="card-title">🌿 10 · Frailejón</div>
+      <span class="card-id">10.svg</span>
+    </div>
+    <div class="comparativa">
+      <div class="vista-box">
+        <span class="vista-label">Normal (100%)</span>
+        <div class="frame-normal"><img src="../public/marcas/10.svg" alt="Frailejón"></div>
+      </div>
+      <div class="vista-box">
+        <span class="vista-label">Pasaporte (150px · 14%)</span>
+        <div class="frame-pasaporte">
+          <div class="watermark-layer" style="background-image:url('../public/marcas/10.svg')"></div>
+          <div class="sim-datos">
+            <div><b>REPÚBLICA DE LA LECTURA</b><br>Santiago Vega<br>ID: 20211567</div>
+            <div class="sim-mrz">P&lt;COL&lt;VEGA&lt;&lt;SANTIAGO&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;<br>20211567&lt;COL&lt;&lt;0610&lt;&lt;&lt;&lt;&lt;&lt;7</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <!-- 11 Mariposa morpho azul -->
+  <article class="card">
+    <div class="card-header">
+      <div class="card-title">🦋 11 · Mariposa morpho azul</div>
+      <span class="card-id">11.svg</span>
+    </div>
+    <div class="comparativa">
+      <div class="vista-box">
+        <span class="vista-label">Normal (100%)</span>
+        <div class="frame-normal"><img src="../public/marcas/11.svg" alt="Mariposa morpho azul"></div>
+      </div>
+      <div class="vista-box">
+        <span class="vista-label">Pasaporte (150px · 14%)</span>
+        <div class="frame-pasaporte">
+          <div class="watermark-layer" style="background-image:url('../public/marcas/11.svg')"></div>
+          <div class="sim-datos">
+            <div><b>REPÚBLICA DE LA LECTURA</b><br>Manuela Parra<br>ID: 20231892</div>
+            <div class="sim-mrz">P&lt;COL&lt;PARRA&lt;&lt;MANUELA&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;<br>20231892&lt;COL&lt;&lt;0610&lt;&lt;&lt;&lt;&lt;&lt;2</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <!-- 12 Hormiga culona -->
+  <article class="card">
+    <div class="card-header">
+      <div class="card-title">🐜 12 · Hormiga culona</div>
+      <span class="card-id">12.svg</span>
+    </div>
+    <div class="comparativa">
+      <div class="vista-box">
+        <span class="vista-label">Normal (100%)</span>
+        <div class="frame-normal"><img src="../public/marcas/12.svg" alt="Hormiga culona"></div>
+      </div>
+      <div class="vista-box">
+        <span class="vista-label">Pasaporte (150px · 14%)</span>
+        <div class="frame-pasaporte">
+          <div class="watermark-layer" style="background-image:url('../public/marcas/12.svg')"></div>
+          <div class="sim-datos">
+            <div><b>REPÚBLICA DE LA LECTURA</b><br>Felipe Arias<br>ID: 20221456</div>
+            <div class="sim-mrz">P&lt;COL&lt;ARIAS&lt;&lt;FELIPE&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;<br>20221456&lt;COL&lt;&lt;0610&lt;&lt;&lt;&lt;&lt;&lt;6</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <!-- 13 Torre de la universidad (UNAB - Oficial Pendiente) -->
+  <article class="card">
+    <div class="card-header">
+      <div class="card-title">🏛️ 13 · Torre de la universidad</div>
+      <span class="card-id">UNAB Oficial</span>
+    </div>
+    <div class="comparativa">
+      <div class="vista-box">
+        <span class="vista-label">Normal (Provisional)</span>
+        <div class="frame-normal"><div class="emoji-placeholder">🏛️</div></div>
+      </div>
+      <div class="vista-box">
+        <span class="vista-label">Pasaporte (Emoji fallback)</span>
+        <div class="frame-pasaporte">
+          <div class="watermark-layer emoji">🏛️</div>
+          <div class="sim-datos">
+            <div><b>REPÚBLICA DE LA LECTURA</b><br>Estudiante UNAB<br>ID: U00182088</div>
+            <div class="sim-mrz">P&lt;COL&lt;UNAB&lt;&lt;CAMPUS&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;<br>U00182088&lt;COL&lt;&lt;0610&lt;&lt;&lt;&lt;&lt;&lt;9</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="badge-unab">Reservada para el archivo vectorial oficial de la UNAB. Se mantiene con emoji provisional según lo requerido.</div>
+  </article>
+
+  <!-- 14 Orquídea -->
+  <article class="card">
+    <div class="card-header">
+      <div class="card-title">🌸 14 · Orquídea</div>
+      <span class="card-id">14.svg</span>
+    </div>
+    <div class="comparativa">
+      <div class="vista-box">
+        <span class="vista-label">Normal (100%)</span>
+        <div class="frame-normal"><img src="../public/marcas/14.svg" alt="Orquídea"></div>
+      </div>
+      <div class="vista-box">
+        <span class="vista-label">Pasaporte (150px · 14%)</span>
+        <div class="frame-pasaporte">
+          <div class="watermark-layer" style="background-image:url('../public/marcas/14.svg')"></div>
+          <div class="sim-datos">
+            <div><b>REPÚBLICA DE LA LECTURA</b><br>Mariana Ortiz<br>ID: 20241567</div>
+            <div class="sim-mrz">P&lt;COL&lt;ORTIZ&lt;&lt;MARIANA&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;<br>20241567&lt;COL&lt;&lt;0610&lt;&lt;&lt;&lt;&lt;&lt;7</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <!-- 15 Guacamaya -->
+  <article class="card">
+    <div class="card-header">
+      <div class="card-title">🦜 15 · Guacamaya</div>
+      <span class="card-id">15.svg</span>
+    </div>
+    <div class="comparativa">
+      <div class="vista-box">
+        <span class="vista-label">Normal (100%)</span>
+        <div class="frame-normal"><img src="../public/marcas/15.svg" alt="Guacamaya"></div>
+      </div>
+      <div class="vista-box">
+        <span class="vista-label">Pasaporte (150px · 14%)</span>
+        <div class="frame-pasaporte">
+          <div class="watermark-layer" style="background-image:url('../public/marcas/15.svg')"></div>
+          <div class="sim-datos">
+            <div><b>REPÚBLICA DE LA LECTURA</b><br>Nicolás Luna<br>ID: 20231789</div>
+            <div class="sim-mrz">P&lt;COL&lt;LUNA&lt;&lt;NICOLAS&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;<br>20231789&lt;COL&lt;&lt;0610&lt;&lt;&lt;&lt;&lt;&lt;9</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <!-- 16 Tucán -->
+  <article class="card">
+    <div class="card-header">
+      <div class="card-title">🐤 16 · Tucán</div>
+      <span class="card-id">16.svg</span>
+    </div>
+    <div class="comparativa">
+      <div class="vista-box">
+        <span class="vista-label">Normal (100%)</span>
+        <div class="frame-normal"><img src="../public/marcas/16.svg" alt="Tucán"></div>
+      </div>
+      <div class="vista-box">
+        <span class="vista-label">Pasaporte (150px · 14%)</span>
+        <div class="frame-pasaporte">
+          <div class="watermark-layer" style="background-image:url('../public/marcas/16.svg')"></div>
+          <div class="sim-datos">
+            <div><b>REPÚBLICA DE LA LECTURA</b><br>Paula Duarte<br>ID: 20221765</div>
+            <div class="sim-mrz">P&lt;COL&lt;DUARTE&lt;&lt;PAULA&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;<br>20221765&lt;COL&lt;&lt;0610&lt;&lt;&lt;&lt;&lt;&lt;5</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <!-- 17 Gallito de roca -->
+  <article class="card">
+    <div class="card-header">
+      <div class="card-title">🐓 17 · Gallito de roca</div>
+      <span class="card-id">17.svg</span>
+    </div>
+    <div class="comparativa">
+      <div class="vista-box">
+        <span class="vista-label">Normal (100%)</span>
+        <div class="frame-normal"><img src="../public/marcas/17.svg" alt="Gallito de roca"></div>
+      </div>
+      <div class="vista-box">
+        <span class="vista-label">Pasaporte (150px · 14%)</span>
+        <div class="frame-pasaporte">
+          <div class="watermark-layer" style="background-image:url('../public/marcas/17.svg')"></div>
+          <div class="sim-datos">
+            <div><b>REPÚBLICA DE LA LECTURA</b><br>Sebastián Mendoza<br>ID: 20241321</div>
+            <div class="sim-mrz">P&lt;COL&lt;MENDOZA&lt;&lt;SEBASTIAN&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;<br>20241321&lt;COL&lt;&lt;0610&lt;&lt;&lt;&lt;&lt;&lt;1</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <!-- 18 Jaguar -->
+  <article class="card">
+    <div class="card-header">
+      <div class="card-title">🐅 18 · Jaguar</div>
+      <span class="card-id">18.svg</span>
+    </div>
+    <div class="comparativa">
+      <div class="vista-box">
+        <span class="vista-label">Normal (100%)</span>
+        <div class="frame-normal"><img src="../public/marcas/18.svg" alt="Jaguar"></div>
+      </div>
+      <div class="vista-box">
+        <span class="vista-label">Pasaporte (150px · 14%)</span>
+        <div class="frame-pasaporte">
+          <div class="watermark-layer" style="background-image:url('../public/marcas/18.svg')"></div>
+          <div class="sim-datos">
+            <div><b>REPÚBLICA DE LA LECTURA</b><br>Gabriel Lozano<br>ID: 20231901</div>
+            <div class="sim-mrz">P&lt;COL&lt;LOZANO&lt;&lt;GABRIEL&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;<br>20231901&lt;COL&lt;&lt;0610&lt;&lt;&lt;&lt;&lt;&lt;1</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <!-- 19 Planta de café -->
+  <article class="card">
+    <div class="card-header">
+      <div class="card-title">☕ 19 · Planta de café</div>
+      <span class="card-id">19.svg</span>
+    </div>
+    <div class="comparativa">
+      <div class="vista-box">
+        <span class="vista-label">Normal (100%)</span>
+        <div class="frame-normal"><img src="../public/marcas/19.svg" alt="Planta de café"></div>
+      </div>
+      <div class="vista-box">
+        <span class="vista-label">Pasaporte (150px · 14%)</span>
+        <div class="frame-pasaporte">
+          <div class="watermark-layer" style="background-image:url('../public/marcas/19.svg')"></div>
+          <div class="sim-datos">
+            <div><b>REPÚBLICA DE LA LECTURA</b><br>Lucía Cárdenas<br>ID: 20221654</div>
+            <div class="sim-mrz">P&lt;COL&lt;CARDENAS&lt;&lt;LUCIA&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;<br>20221654&lt;COL&lt;&lt;0610&lt;&lt;&lt;&lt;&lt;&lt;4</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <!-- 20 Ballena jorobada -->
+  <article class="card">
+    <div class="card-header">
+      <div class="card-title">🐋 20 · Ballena jorobada</div>
+      <span class="card-id">20.svg</span>
+    </div>
+    <div class="comparativa">
+      <div class="vista-box">
+        <span class="vista-label">Normal (100%)</span>
+        <div class="frame-normal"><img src="../public/marcas/20.svg" alt="Ballena jorobada"></div>
+      </div>
+      <div class="vista-box">
+        <span class="vista-label">Pasaporte (150px · 14%)</span>
+        <div class="frame-pasaporte">
+          <div class="watermark-layer" style="background-image:url('../public/marcas/20.svg')"></div>
+          <div class="sim-datos">
+            <div><b>REPÚBLICA DE LA LECTURA</b><br>Emilio Barreto<br>ID: 20241289</div>
+            <div class="sim-mrz">P&lt;COL&lt;BARRETO&lt;&lt;EMILIO&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;<br>20241289&lt;COL&lt;&lt;0610&lt;&lt;&lt;&lt;&lt;&lt;9</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </article>
+
+</main>
+
+</body>
+</html>

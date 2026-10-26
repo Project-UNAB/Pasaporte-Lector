@@ -16,23 +16,7 @@ export function distanciaMetros(a: { lat: number; lng: number }, b: { lat: numbe
   return 2 * R * Math.asin(Math.sqrt(h))
 }
 
-export function estaCerca(pos: Posicion, punto: { lat: number; lng: number }, radio: number): boolean {
-  return distanciaMetros(pos, punto) <= radio
-}
-
 export const ignorarUbicacion = import.meta.env.DEV && import.meta.env.VITE_IGNORAR_UBICACION === 'true'
-
-export type EstadoPermiso = 'concedido' | 'denegado' | 'preguntar' | 'desconocido'
-
-export async function permisoUbicacion(): Promise<EstadoPermiso> {
-  try {
-    const r = await navigator.permissions?.query({ name: 'geolocation' })
-    if (!r) return 'desconocido'
-    return r.state === 'granted' ? 'concedido' : r.state === 'denied' ? 'denegado' : 'preguntar'
-  } catch {
-    return 'desconocido'
-  }
-}
 
 export function aPosicion(p: GeolocationPosition): Posicion {
   return { lat: p.coords.latitude, lng: p.coords.longitude, precision: p.coords.accuracy, fecha: p.timestamp }
