@@ -15,6 +15,8 @@ export function mensajeError(e: unknown): string {
   const texto = e instanceof Error ? e.message : typeof e === 'object' && e && 'message' in e ? String(e.message) : String(e)
   for (const [clave, msg] of Object.entries(MENSAJES)) if (texto.includes(clave)) return msg
   if (/Database error saving new user/i.test(texto)) return 'Solo se permiten correos @unab.edu.co.'
+  if (/Signups not allowed|otp_disabled|User not found/i.test(texto))
+    return 'No hay una cuenta con ese correo. Toca «Crear cuenta» para registrarte.'
   if (/rate limit|security purposes|only request this after/i.test(texto))
     return 'Debes esperar un momento antes de pedir otro código.'
   if (/expired|invalid|Token has expired/i.test(texto)) return 'El código no es válido o ya venció.'

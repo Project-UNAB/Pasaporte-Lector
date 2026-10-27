@@ -33,6 +33,19 @@
   width: 100%;
 }
 
+/* Botón secundario sobre el fondo verde: contorno blanco. */
+.bienvenida .btn.claro {
+  background: transparent;
+  color: #fff;
+  border: 2px solid rgba(255, 255, 255, 0.85);
+  box-shadow: none;
+}
+
+.bienvenida .btn.claro:active {
+  transform: none;
+  background: rgba(255, 255, 255, 0.12);
+}
+
 .bienvenida small {
   opacity: 0.85;
   font-weight: 700;

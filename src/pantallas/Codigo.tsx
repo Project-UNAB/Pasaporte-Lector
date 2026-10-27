@@ -9,6 +9,7 @@ import { opcionesCodigo, supabase } from '../lib/supabase'
 export function Codigo() {
   const navegar = useNavigate()
   const correo = leer('correo')
+  const crear = leer('modo') !== 'entrar'
   const [codigo, setCodigo] = useState('')
   const [enviando, setEnviando] = useState(false)
   const [error, setError] = useState('')
@@ -46,7 +47,7 @@ export function Codigo() {
     setError('')
     setAviso('')
     try {
-      const { error } = await supabase.auth.signInWithOtp({ email: correo!, options: opcionesCodigo() })
+      const { error } = await supabase.auth.signInWithOtp({ email: correo!, options: opcionesCodigo(crear) })
       if (error) throw error
       guardar('codigoEnviado', String(Date.now()))
       setEspera(config.segundosReenvio)
@@ -58,11 +59,11 @@ export function Codigo() {
 
   return (
     <main className="pantalla">
-      <Pasos actual={1} />
+      {crear ? <Pasos actual={1} /> : <div style={{ height: 8 }} />}
       <h1 className="titulo">Revisa tu correo</h1>
       <p className="mut">
-        Escribe el código que enviamos a <b>{correo}</b>. Si no lo ves, busca en la carpeta de spam. Si te llegó un
-        enlace, ábrelo en este mismo navegador.
+        Escribe el código de verificación de 6 dígitos que enviamos a <b>{correo}</b>. Si no lo ves, busca en la
+        carpeta de spam.
       </p>
 
       <form onSubmit={verificar} style={{ display: 'contents' }}>
@@ -99,7 +100,7 @@ export function Codigo() {
           <button type="button" className="enlace" disabled={espera > 0} onClick={reenviar}>
             {espera > 0 ? `Reenviar código en ${espera} s` : 'Reenviar código'}
           </button>
-          <button type="button" className="enlace" onClick={() => navegar('/ingresar')}>
+          <button type="button" className="enlace" onClick={() => navegar(crear ? '/ingresar' : '/ingresar?modo=entrar')}>
             Cambiar correo
           </button>
         </div>

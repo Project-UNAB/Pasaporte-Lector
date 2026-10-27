@@ -4,7 +4,7 @@
 
 import { expect, test } from '@playwright/test'
 import { textos } from '../../src/contenido.js'
-import { CORREO, perfilListo } from './apoyo/mock-supabase.js'
+import { CODIGO_CORREO, CORREO, perfilListo } from './apoyo/mock-supabase.js'
 import { iniciarSesion, prepararPagina } from './apoyo/ayudas.js'
 
 const haceHoras = (horas: number) => new Date(Date.now() - horas * 3_600_000).toISOString()
@@ -57,4 +57,33 @@ test('i) /calibrar carga sin sesión', async ({ page }) => {
 
   // La página oculta no depende de la sesión ni del juego.
   expect(falso.registro.filter((peticion) => peticion.includes('/rest/v1/rpc/'))).toHaveLength(0)
+})
+
+test('j) iniciar sesión con una cuenta existente entra con el código, sin pedir la autorización otra vez', async ({ page }) => {
+  await prepararPagina(page, { perfil: perfilListo() })
+  await page.getByRole('link', { name: textos.bienvenidaBotonEntrar }).click()
+  await expect(page).toHaveURL(/\/ingresar\?modo=entrar$/)
+  await expect(page.getByRole('heading', { name: 'Inicia sesión' })).toBeVisible()
+  await expect(page.getByRole('checkbox')).toHaveCount(0)
+
+  await page.getByLabel('Correo', { exact: true }).fill(CORREO)
+  await page.getByRole('button', { name: 'Enviar código' }).click()
+  await expect(page).toHaveURL(/\/codigo$/)
+  await page.locator('#codigo').fill(CODIGO_CORREO)
+  await page.getByRole('button', { name: 'Entrar' }).click()
+  await page.waitForURL((url) => !url.pathname.startsWith('/codigo'))
+  await expect(page).not.toHaveURL(/\/ingresar/)
+})
+
+test('k) iniciar sesión con un correo sin cuenta avisa que hay que crearla', async ({ page }) => {
+  await prepararPagina(page)
+  await page.goto('/ingresar?modo=entrar')
+  await page.getByLabel('Correo', { exact: true }).fill(CORREO)
+  await page.getByRole('button', { name: 'Enviar código' }).click()
+  await expect(page.getByRole('alert')).toContainText('No hay una cuenta con ese correo')
+  await expect(page).toHaveURL(/\/ingresar\?modo=entrar$/)
+
+  await page.getByRole('link', { name: '¿No tienes cuenta? Créala aquí' }).click()
+  await expect(page.getByRole('heading', { name: 'Crea tu cuenta' })).toBeVisible()
+  await expect(page.getByRole('checkbox')).toHaveCount(1)
 })

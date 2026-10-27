@@ -22,6 +22,9 @@ export function Bienvenida() {
         <Link to="/ingresar" className="btn dorado">
           {textos.bienvenidaBoton}
         </Link>
+        <Link to="/ingresar?modo=entrar" className="btn claro">
+          {textos.bienvenidaBotonEntrar}
+        </Link>
         <small>{textos.bienvenidaNota}</small>
       </div>
     </main>

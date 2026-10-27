@@ -31,8 +31,9 @@ export const textos = {
   nombreProyecto: 'Pasaporte Lector',
   bienvenidaTitulo: 'Tu próxima aventura empieza leyendo',
   bienvenidaTexto: 'Recorre 3 destinos de la universidad y gana tu pasaporte.',
-  bienvenidaBoton: 'Comenzar viaje',
-  bienvenidaNota: 'Ingresa con tu correo institucional',
+  bienvenidaBoton: 'Crear cuenta',
+  bienvenidaBotonEntrar: 'Iniciar sesión',
+  bienvenidaNota: 'Con tu correo institucional y un código de verificación',
   // PENDIENTE: texto definitivo entregado por Bienestar Estudiantil (Ley 1581 de 2012).
   autorizacionDatos:
     'Autorizo a la Universidad Autónoma de Bucaramanga y al equipo de Pasaporte Lector a tratar mis datos ' +

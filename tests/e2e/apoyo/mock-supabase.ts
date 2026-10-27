@@ -353,6 +353,9 @@ export async function montarSupabaseFalso(page: Page, semilla: Semilla = {}): Pr
       if (metodo === 'POST' && camino === '/auth/v1/otp') {
         const correo = String(cuerpo.email ?? '')
         if (!correo.endsWith('@unab.edu.co')) return respuesta(ruta, { message: 'Solo se permiten correos @unab.edu.co' }, 400)
+        // Iniciar sesión (create_user: false) solo sirve si la cuenta ya existe; aquí, si hay perfil.
+        if (cuerpo.create_user === false && !perfil)
+          return respuesta(ruta, { code: 422, error_code: 'otp_disabled', msg: 'Signups not allowed for otp' }, 422)
         correoPendiente = correo
         return respuesta(ruta, {})
       }
