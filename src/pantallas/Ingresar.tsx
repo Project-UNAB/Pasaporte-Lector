@@ -6,7 +6,7 @@ import { useJuego, type EstadoServidor } from '../juego'
 import { guardar, leer } from '../lib/almacen'
 import { mensajeError } from '../lib/errores'
 import { correoValido, normalizarCorreo } from '../lib/normalizar'
-import { supabase } from '../lib/supabase'
+import { opcionesCodigo, supabase } from '../lib/supabase'
 
 export function Ingresar() {
   const { etapa, aplicar, salir } = useJuego()
@@ -33,7 +33,7 @@ export function Ingresar() {
         return
       }
       if (!dominioOk) throw new Error(`Usa tu correo @${config.dominioCorreo}.`)
-      const { error } = await supabase.auth.signInWithOtp({ email: correoNorm, options: { shouldCreateUser: true } })
+      const { error } = await supabase.auth.signInWithOtp({ email: correoNorm, options: opcionesCodigo() })
       if (error) throw error
       guardar('correo', correoNorm)
       guardar('consentimiento', 'si')

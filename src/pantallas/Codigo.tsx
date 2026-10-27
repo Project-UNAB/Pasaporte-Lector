@@ -4,7 +4,7 @@ import { config } from '../contenido.js'
 import { Pasos } from '../componentes/Pasos'
 import { guardar, leer } from '../lib/almacen'
 import { mensajeError } from '../lib/errores'
-import { supabase } from '../lib/supabase'
+import { opcionesCodigo, supabase } from '../lib/supabase'
 
 export function Codigo() {
   const navegar = useNavigate()
@@ -46,7 +46,7 @@ export function Codigo() {
     setError('')
     setAviso('')
     try {
-      const { error } = await supabase.auth.signInWithOtp({ email: correo!, options: { shouldCreateUser: true } })
+      const { error } = await supabase.auth.signInWithOtp({ email: correo!, options: opcionesCodigo() })
       if (error) throw error
       guardar('codigoEnviado', String(Date.now()))
       setEspera(config.segundosReenvio)
@@ -61,7 +61,8 @@ export function Codigo() {
       <Pasos actual={1} />
       <h1 className="titulo">Revisa tu correo</h1>
       <p className="mut">
-        Escribe el código que enviamos a <b>{correo}</b>. Si no lo ves, busca en la carpeta de spam.
+        Escribe el código que enviamos a <b>{correo}</b>. Si no lo ves, busca en la carpeta de spam. Si te llegó un
+        enlace, ábrelo en este mismo navegador.
       </p>
 
       <form onSubmit={verificar} style={{ display: 'contents' }}>
