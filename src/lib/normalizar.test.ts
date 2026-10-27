@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { normalizarPalabra as delNavegador } from './normalizar'
+import { correoValido, normalizarPalabra as delNavegador } from './normalizar'
 import { normalizarPalabra as delScript } from '../../scripts/normalizar.mjs'
 import { distanciaMetros } from './geo'
 import { paradas } from '../contenido.js'
@@ -15,6 +15,18 @@ describe('normalizarPalabra', () => {
     expect(delNavegador(entrada)).toBe(esperado)
     expect(delScript(entrada)).toBe(esperado)
   })
+})
+
+describe('correoValido', () => {
+  it.each(['sarias202@unab.edu.co', 'santiago.suarez@unab.edu.co', 'u00182088@unab.edu.co'])('acepta %s', (c) => {
+    expect(correoValido(c, 'unab.edu.co')).toBe(true)
+  })
+  it.each(['@unab.edu.co', 'ana@gmail.com', 'ana@unab.edu.co.co', 'ana@unabXedu.co', 'a b@unab.edu.co', 'a@b@unab.edu.co', 'ana@unap.edu.co'])(
+    'rechaza %s',
+    (c) => {
+      expect(correoValido(c, 'unab.edu.co')).toBe(false)
+    },
+  )
 })
 
 describe('distanciaMetros', () => {

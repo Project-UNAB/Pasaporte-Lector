@@ -12,7 +12,7 @@ function mrz(nombre: string, id: string, fecha: string) {
   const limpiar = (s: string) =>
     s
       .normalize('NFD')
-      .replace(/[̀-ͯ]/g, '')
+      .replace(/[\u0300-\u036f]/g, '')
       .toUpperCase()
       .replace(/[^A-Z ]/g, '')
       .trim()

@@ -5,7 +5,7 @@ import { Pasos } from '../componentes/Pasos'
 import { useJuego, type EstadoServidor } from '../juego'
 import { guardar, leer } from '../lib/almacen'
 import { mensajeError } from '../lib/errores'
-import { normalizarCorreo } from '../lib/normalizar'
+import { correoValido, normalizarCorreo } from '../lib/normalizar'
 import { supabase } from '../lib/supabase'
 
 export function Ingresar() {
@@ -18,7 +18,7 @@ export function Ingresar() {
 
   const yaVerificado = etapa === 'consentimiento'
   const correoNorm = normalizarCorreo(correo)
-  const dominioOk = new RegExp(`^[^\s@]+@${config.dominioCorreo.replace(/\./g, '\.')}$`).test(correoNorm)
+  const dominioOk = correoValido(correoNorm, config.dominioCorreo)
 
   async function enviar(e: FormEvent) {
     e.preventDefault()
