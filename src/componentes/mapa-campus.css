@@ -72,19 +72,27 @@
   box-shadow:
     0 0 0 5px rgba(15, 82, 67, 0.18),
     0 3px 10px rgba(10, 46, 38, 0.28);
+}
+
+.pin-parada.actual::after {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  border: 2px solid var(--g5);
+  opacity: 0.45;
+  pointer-events: none;
   animation: pulsoPinActual 2.4s ease-in-out infinite alternate;
 }
 
 @keyframes pulsoPinActual {
   from {
-    box-shadow:
-      0 0 0 4px rgba(15, 82, 67, 0.14),
-      0 3px 8px rgba(10, 46, 38, 0.24);
+    transform: scale(0.95);
+    opacity: 0.55;
   }
   to {
-    box-shadow:
-      0 0 0 8px rgba(15, 82, 67, 0.26),
-      0 4px 12px rgba(10, 46, 38, 0.3);
+    transform: scale(1.22);
+    opacity: 0.15;
   }
 }
 
