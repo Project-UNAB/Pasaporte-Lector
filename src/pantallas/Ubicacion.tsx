@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router'
 import { LifeBuoy, Lock, Map, MapPin } from 'lucide-react'
 import { Volver } from '../componentes/Volver'
 import { guardar } from '../lib/almacen'
-import { codigoError, instruccionesPermiso, pedirPosicion } from '../lib/geo'
+import { codigoError, instruccionesPermiso, MENSAJE_SIN_HTTPS, pedirPosicion } from '../lib/geo'
 
 export function Ubicacion() {
   const navegar = useNavigate()
@@ -21,7 +21,7 @@ export function Ubicacion() {
       await pedirPosicion()
       seguir()
     } catch (e) {
-      if (codigoError(e) === 1) setNegado(true)
+      if (codigoError(e) === 1 || !window.isSecureContext) setNegado(true)
       else seguir()
     } finally {
       setPidiendo(false)
@@ -63,7 +63,7 @@ export function Ubicacion() {
 
       {negado && (
         <p className="aviso info" role="alert">
-          {instruccionesPermiso()} También puedes seguir sin ella y usar la ayuda.
+          {window.isSecureContext ? instruccionesPermiso() : MENSAJE_SIN_HTTPS} También puedes seguir sin ella y usar la ayuda.
         </p>
       )}
 

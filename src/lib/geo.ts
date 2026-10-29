@@ -50,6 +50,9 @@ export function codigoError(err: unknown): number {
 
 const esIOS = () => /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)
 
+/** Sin https el navegador bloquea la ubicación sin mostrar ningún aviso. */
+export const MENSAJE_SIN_HTTPS = 'La ubicación solo funciona si la dirección de la página empieza por https://. Ábrela así e intenta de nuevo.'
+
 /** Qué hacer cuando la ubicación está bloqueada, según el celular. */
 export function instruccionesPermiso(): string {
   return esIOS()

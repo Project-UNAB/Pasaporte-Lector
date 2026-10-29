@@ -6,7 +6,7 @@ import { MapaCampus } from '../componentes/MapaCampus'
 import { Reloj } from '../componentes/Reloj'
 import { paradaCompletada, siguienteParada, useJuego, type EstadoServidor } from '../juego'
 import { mensajeError } from '../lib/errores'
-import { codigoError, distanciaMetros, ignorarUbicacion, instruccionesPermiso, pedirPosicion, type Posicion } from '../lib/geo'
+import { codigoError, distanciaMetros, ignorarUbicacion, instruccionesPermiso, MENSAJE_SIN_HTTPS, pedirPosicion, type Posicion } from '../lib/geo'
 import { supabase } from '../lib/supabase'
 import { useUbicacion } from '../lib/useUbicacion'
 import './parada.css'
@@ -76,9 +76,11 @@ export default function Parada() {
         tipo: 'info',
         texto: pos
           ? `Estás lejos de la parada (a unos ${Math.round(distanciaMetros(pos, parada!))} m). Acércate al póster e intenta de nuevo.`
-          : codigo === 1
-            ? instruccionesPermiso()
-            : 'No logramos señal de GPS. Sal a un lugar abierto, espera unos segundos e intenta de nuevo.',
+          : !window.isSecureContext
+            ? MENSAJE_SIN_HTTPS
+            : codigo === 1
+              ? instruccionesPermiso()
+              : 'No logramos señal de GPS. Sal a un lugar abierto, espera unos segundos e intenta de nuevo.',
       })
     } catch (err) {
       setAviso({ tipo: 'error', texto: mensajeError(err) })
