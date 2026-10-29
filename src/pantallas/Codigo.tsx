@@ -6,11 +6,14 @@ import { guardar, leer } from '../lib/almacen'
 import { mensajeError } from '../lib/errores'
 import { opcionesCodigo, supabase } from '../lib/supabase'
 
+const DIGITOS = 6
+
 export function Codigo() {
   const navegar = useNavigate()
   const correo = leer('correo')
   const crear = leer('modo') !== 'entrar'
   const [codigo, setCodigo] = useState('')
+  const [enfocado, setEnfocado] = useState(true)
   const [enviando, setEnviando] = useState(false)
   const [error, setError] = useState('')
   const [aviso, setAviso] = useState('')
@@ -57,44 +60,78 @@ export function Codigo() {
     }
   }
 
-  return (
-    <main className="pantalla">
-      {crear ? <Pasos actual={1} /> : <div style={{ height: 8 }} />}
-      <h1 className="titulo">Revisa tu correo</h1>
-      <p className="mut">
-        Escribe el código de verificación de 6 dígitos que enviamos a <b>{correo}</b>. Si no lo ves, busca en la
-        carpeta de spam.
-      </p>
+  const indiceActivo = Math.min(codigo.length, DIGITOS - 1)
 
-      <form onSubmit={verificar} style={{ display: 'contents' }}>
-        <div className="campo">
-          <label htmlFor="codigo" className="sr">
-            Código
-          </label>
-          <input
-            id="codigo"
-            className="entrada grande"
-            inputMode="numeric"
-            autoComplete="one-time-code"
-            pattern="[0-9]*"
-            maxLength={10}
-            enterKeyHint="go"
-            placeholder="••••••"
-            value={codigo}
-            onChange={(e) => setCodigo(e.target.value.replace(/[^0-9]/g, ''))}
-            autoFocus
-          />
+  return (
+    <main className="pantalla acceso-pantalla">
+      {crear ? <Pasos actual={1} /> : <div style={{ height: 8 }} />}
+
+      <form onSubmit={verificar} className="acceso-form aparece">
+        <div className="encabezado-centrado acceso-cabeza">
+          <h1 className="acceso-titulo">Revisa tu correo</h1>
+          <p className="mut">
+            Escribe el código de verificación de 6 dígitos que enviamos a <b>{correo}</b>. Si no lo ves, busca en la
+            carpeta de spam.
+          </p>
         </div>
 
-        {error && (
-          <p className="aviso error" role="alert">
-            {error}
-          </p>
-        )}
-        {aviso && <p className="aviso ok">{aviso}</p>}
+        <div className="acceso-campos">
+          <div className="campo campo-centrado">
+            <label htmlFor="codigo" className="sr">
+              Código
+            </label>
+            <div className="otp-contenedor">
+              <input
+                id="codigo"
+                className="otp-input-real"
+                inputMode="numeric"
+                autoComplete="one-time-code"
+                pattern="[0-9]*"
+                maxLength={DIGITOS}
+                enterKeyHint="go"
+                value={codigo}
+                onFocus={() => setEnfocado(true)}
+                onBlur={() => setEnfocado(false)}
+                onChange={(e) => setCodigo(e.target.value.replace(/[^0-9]/g, '').slice(0, DIGITOS))}
+                autoFocus
+              />
+              <div className="otp-casillas" aria-hidden="true">
+                {Array.from({ length: DIGITOS }, (_, i) => {
+                  const char = codigo[i] ?? ''
+                  const activa = enfocado && i === indiceActivo && codigo.length < DIGITOS
+                  return (
+                    <div
+                      key={i}
+                      className={`otp-casilla${char ? ' llena' : ''}${activa ? ' activa' : ''}`}
+                    >
+                      {char ? (
+                        <span key={`${i}-${char}`} className="otp-digito">
+                          {char}
+                        </span>
+                      ) : (
+                        <span className="otp-punto" />
+                      )}
+                    </div>
+                  )
+                })}
+              </div>
+            </div>
+          </div>
 
-        <div className="pie">
-          <button className="btn" disabled={enviando || codigo.length < 6}>
+          {error && (
+            <p className="aviso error" role="alert" style={{ textAlign: 'center' }}>
+              {error}
+            </p>
+          )}
+          {aviso && (
+            <p className="aviso ok" style={{ textAlign: 'center' }}>
+              {aviso}
+            </p>
+          )}
+        </div>
+
+        <div className="pie acceso-pie">
+          <button className="btn btn-pildora" disabled={enviando || codigo.length < 6}>
             {enviando ? 'Verificando…' : 'Entrar'}
           </button>
           <button type="button" className="enlace" disabled={espera > 0} onClick={reenviar}>
