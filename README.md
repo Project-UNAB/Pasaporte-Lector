@@ -71,7 +71,7 @@ npm run dev                          # https://<IP-del-PC>:5173 en el celular (a
 ```
 
 > Cámara y ubicación requieren HTTPS. Para probar desde el celular en local usa un túnel (`npx cloudflared tunnel --url http://localhost:5173`) o despliega una vista previa en Vercel.
-> Con `VITE_IGNORAR_UBICACION=true` (solo en desarrollo) se puede jugar sin estar en el campus; nunca tiene efecto en producción.
+> Modo pruebas: con `VITE_IGNORAR_UBICACION=true` el botón «Ya llegué» funciona aunque estés lejos y la parada muestra un aviso. Sirve en local y en Vercel; para el lanzamiento debe estar en `false` o no existir.
 
 ### 4. Publicar en Vercel
 

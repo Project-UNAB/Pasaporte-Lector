@@ -16,7 +16,8 @@ export function distanciaMetros(a: { lat: number; lng: number }, b: { lat: numbe
   return 2 * R * Math.asin(Math.sqrt(h))
 }
 
-export const ignorarUbicacion = import.meta.env.DEV && import.meta.env.VITE_IGNORAR_UBICACION === 'true'
+/** Modo pruebas: «Ya llegué» funciona aunque estés lejos. Apagarlo (false) antes del lanzamiento. */
+export const ignorarUbicacion = import.meta.env.VITE_IGNORAR_UBICACION === 'true'
 
 export function aPosicion(p: GeolocationPosition): Posicion {
   return { lat: p.coords.latitude, lng: p.coords.longitude, precision: p.coords.accuracy, fecha: p.timestamp }

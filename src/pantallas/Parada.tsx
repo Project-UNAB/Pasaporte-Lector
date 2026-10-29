@@ -16,7 +16,7 @@ export default function Parada() {
   const { id = '' } = useParams()
   const { estado, aplicar, refrescar } = useJuego()
   const { posicion, error: errorUbicacion } = useUbicacion()
-  const [cerca, setCerca] = useState(ignorarUbicacion)
+  const [cerca, setCerca] = useState(false)
   const [buscando, setBuscando] = useState(false)
   const [palabra, setPalabra] = useState('')
   const [enviando, setEnviando] = useState(false)
@@ -55,8 +55,8 @@ export default function Parada() {
     setBuscando(true)
     let pos: Posicion | null = posicion && Date.now() - posicion.fecha < 10000 ? posicion : null
     try {
-      if (!pos) pos = await pedirPosicion().catch(() => null)
-      if (pos && distanciaMetros(pos, parada!) <= radio) {
+      if (!pos && !ignorarUbicacion) pos = await pedirPosicion().catch(() => null)
+      if (ignorarUbicacion || (pos && distanciaMetros(pos, parada!) <= radio)) {
         setCerca(true)
         return
       }
@@ -138,6 +138,12 @@ export default function Parada() {
       </div>
 
       <section className="tarjeta">
+      {ignorarUbicacion && (
+        <p className="aviso info" role="note">
+          Modo pruebas: «Ya llegué» funciona aunque estés lejos.
+        </p>
+      )}
+
         <span className="chip">
           Parada {parada.indiceEnBloque + 1} de {bloque.paradas.length}
         </span>
