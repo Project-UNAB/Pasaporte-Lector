@@ -7,17 +7,32 @@ export interface DatosImagen {
   id: string
   mrz: [string, string]
   foto: Blob | null
-  marca: { nombre: string; emoji: string; svg?: string; color?: string }
+  marca: { nombre: string; emoji?: string; svg?: string; color?: string }
   sellos: { icono: string; nombre: string; fecha: string; color: string }[]
 }
 
 const ANCHO = 1080
-const TITULO = "'Fredoka Variable', 'Fredoka', system-ui, sans-serif"
-const TEXTO = "'Nunito Variable', 'Nunito', system-ui, sans-serif"
+const TITULO = "'Inter Variable', 'Inter', system-ui, sans-serif"
+const TEXTO = "'Inter Variable', 'Inter', system-ui, sans-serif"
 const MONO = "ui-monospace, 'SF Mono', Menlo, Consolas, monospace"
 const PAPEL = '#f3f1df'
 const TINTA = '#0b3d34'
 const VERDE = '#0f6b57'
+
+const TRAZOS_ICONO: Record<string, string> = {
+  pluma:
+    '<path d="M12.67 19a2 2 0 0 0 1.416-.588l6.154-6.172a6 6 0 0 0-8.49-8.49L5.586 9.914A2 2 0 0 0 5 11.328V18a1 1 0 0 0 1 1z"/><path d="M16 8 2 22"/><path d="M17.5 15H9"/>',
+  mascaras:
+    '<path d="M10 11h.01"/><path d="M14 6h.01"/><path d="M18 6h.01"/><path d="M6.5 13.1h.01"/><path d="M22 5c0 9-4 12-6 12s-6-3-6-12c0-2 2-3 6-3s6 1 6 3"/><path d="M17.4 9.9c-.8.8-2 .8-2.8 0"/><path d="M10.1 7.1C9 7.2 7.7 7.7 6 8.6c-3.5 2-4.7 3.9-3.7 5.6 4.5 7.8 9.5 8.4 11.2 7.4.9-.5 1.9-2.1 1.9-4.7"/><path d="M9.1 16.5c.3-1.1 1.4-1.7 2.4-1.4"/>',
+  libros:
+    '<path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/>',
+}
+
+function svgIcono(icono: string, color: string): string {
+  const trazos = TRAZOS_ICONO[icono] ?? TRAZOS_ICONO.libros
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round">${trazos}</svg>`
+  return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`
+}
 
 function cargarImagen(src: string): Promise<HTMLImageElement | null> {
   return new Promise((ok) => {
@@ -56,7 +71,7 @@ function lineas(ctx: CanvasRenderingContext2D, texto: string, ancho: number, max
   return res
 }
 
-/** La marca de agua: SVG tal cual, SVG pintado con su color (la UNAB) o el emoji. */
+/** La marca de agua: SVG tal cual o SVG pintado con su color (la UNAB). */
 async function dibujarMarca(ctx: CanvasRenderingContext2D, marca: DatosImagen['marca'], x: number, y: number, lado: number) {
   ctx.save()
   ctx.globalAlpha = 0.14
@@ -80,11 +95,6 @@ async function dibujarMarca(ctx: CanvasRenderingContext2D, marca: DatosImagen['m
     ctx.drawImage(molde, dx, dy)
   } else if (img) {
     ctx.drawImage(img, dx, dy, w, h)
-  } else {
-    ctx.font = `${lado * 0.8}px ${TEXTO}`
-    ctx.textAlign = 'center'
-    ctx.textBaseline = 'middle'
-    ctx.fillText(marca.emoji, x + lado / 2, y + lado / 2)
   }
   ctx.restore()
 }
@@ -129,7 +139,7 @@ export async function crearImagenPasaporte(d: DatosImagen): Promise<Blob> {
   ctx.fillStyle = '#fff'
   ctx.textAlign = 'center'
   ctx.font = `600 72px ${TITULO}`
-  ctx.fillText('¡Viaje completado! 🎉', ANCHO / 2, 125)
+  ctx.fillText('¡Viaje completado!', ANCHO / 2, 125)
   ctx.globalAlpha = 0.8
   ctx.font = `700 32px ${TEXTO}`
   ctx.fillText('Pasaporte Lector · UNAB', ANCHO / 2, 180)
@@ -204,6 +214,8 @@ export async function crearImagenPasaporte(d: DatosImagen): Promise<Blob> {
   ctx.restore()
   encabezado(ctx, 'Sellos de viaje', ySellos + 70)
 
+  const iconosSellos = await Promise.all(d.sellos.map((s) => cargarImagen(svgIcono(s.icono, s.color))))
+
   d.sellos.forEach((s, i) => {
     const fila = Math.floor(i / porFila)
     const enFila = Math.min(porFila, d.sellos.length - fila * porFila)
@@ -223,8 +235,11 @@ export async function crearImagenPasaporte(d: DatosImagen): Promise<Blob> {
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
     const t = radio / 118
-    ctx.font = `${56 * t}px ${TEXTO}`
-    ctx.fillText(s.icono, 0, -38 * t)
+    const ladoIcono = 56 * t
+    const imgIcono = iconosSellos[i]
+    if (imgIcono) {
+      ctx.drawImage(imgIcono, -ladoIcono / 2, -38 * t - ladoIcono / 2, ladoIcono, ladoIcono)
+    }
     ctx.fillStyle = s.color
     ctx.font = `600 ${26 * t}px ${TITULO}`
     const nombre = lineas(ctx, s.nombre.toUpperCase(), radio * 1.6, 2)

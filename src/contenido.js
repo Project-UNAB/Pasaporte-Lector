@@ -75,7 +75,7 @@ export const bloques = [
     id: 'b1',
     nombre: 'Ruta de la Poesía',
     zona: 'El D',
-    icono: '🖋️',
+    icono: 'pluma',
     paradas: [
       {
         id: 'b1-p1',
@@ -135,7 +135,7 @@ export const bloques = [
     id: 'b2',
     nombre: 'Ruta del Teatro',
     zona: 'El L de Ingenierías',
-    icono: '🎭',
+    icono: 'mascaras',
     paradas: [
       {
         id: 'b2-p1',
@@ -195,7 +195,7 @@ export const bloques = [
     id: 'b3',
     nombre: 'Ruta de la Narrativa',
     zona: 'La biblioteca',
-    icono: '📚',
+    icono: 'libros',
     paradas: [
       {
         id: 'b3-p1',
@@ -253,31 +253,30 @@ export const bloques = [
   },
 ]
 
-// 20 marcas de agua. `svg` apunta a public/marcas/NN.svg cuando exista el dibujo final;
-// mientras tanto se usa el emoji como marcador provisional.
+// 20 marcas de agua. `svg` apunta a public/marcas/NN.svg.
 // Solo la marca de la UNAB (13) tiene `color`: es el símbolo oficial en un solo color y se
 // pinta con el color que se escriba aquí (por ejemplo '#0f6b57' para verde o '#ffffff' para blanco).
 export const marcasDeAgua = [
-  { id: 1, nombre: 'Rana dorada', emoji: '🐸', svg: '/marcas/01.svg' },
-  { id: 2, nombre: 'Colibrí', emoji: '🐦', svg: '/marcas/02.svg' },
-  { id: 3, nombre: 'Palma de cera', emoji: '🌴', svg: '/marcas/03.svg' },
-  { id: 4, nombre: 'Tortuga marina', emoji: '🐢', svg: '/marcas/04.svg' },
-  { id: 5, nombre: 'Cóndor de los Andes', emoji: '🦅', svg: '/marcas/05.svg' },
-  { id: 6, nombre: 'Chigüiro', emoji: '🦫', svg: '/marcas/06.svg' },
-  { id: 7, nombre: 'Tigrillo', emoji: '🐆', svg: '/marcas/07.svg' },
-  { id: 8, nombre: 'Oso de anteojos', emoji: '🐻', svg: '/marcas/08.svg' },
-  { id: 9, nombre: 'Delfín rosado', emoji: '🐬', svg: '/marcas/09.svg' },
-  { id: 10, nombre: 'Frailejón', emoji: '🌿', svg: '/marcas/10.svg' },
-  { id: 11, nombre: 'Mariposa morpho azul', emoji: '🦋', svg: '/marcas/11.svg' },
-  { id: 12, nombre: 'Hormiga culona', emoji: '🐜', svg: '/marcas/12.svg' },
-  { id: 13, nombre: 'Torre de la universidad', emoji: '🏛️', svg: '/marcas/13.svg', color: '#f5a300' },
-  { id: 14, nombre: 'Orquídea', emoji: '🌸', svg: '/marcas/14.svg' },
-  { id: 15, nombre: 'Guacamaya', emoji: '🦜', svg: '/marcas/15.svg' },
-  { id: 16, nombre: 'Tucán', emoji: '🐤', svg: '/marcas/16.svg' },
-  { id: 17, nombre: 'Gallito de roca', emoji: '🐓', svg: '/marcas/17.svg' },
-  { id: 18, nombre: 'Jaguar', emoji: '🐅', svg: '/marcas/18.svg' },
-  { id: 19, nombre: 'Planta de café', emoji: '☕', svg: '/marcas/19.svg' },
-  { id: 20, nombre: 'Ballena jorobada', emoji: '🐋', svg: '/marcas/20.svg' },
+  { id: 1, nombre: 'Rana dorada', emoji: '', svg: '/marcas/01.svg' },
+  { id: 2, nombre: 'Colibrí', emoji: '', svg: '/marcas/02.svg' },
+  { id: 3, nombre: 'Palma de cera', emoji: '', svg: '/marcas/03.svg' },
+  { id: 4, nombre: 'Tortuga marina', emoji: '', svg: '/marcas/04.svg' },
+  { id: 5, nombre: 'Cóndor de los Andes', emoji: '', svg: '/marcas/05.svg' },
+  { id: 6, nombre: 'Chigüiro', emoji: '', svg: '/marcas/06.svg' },
+  { id: 7, nombre: 'Tigrillo', emoji: '', svg: '/marcas/07.svg' },
+  { id: 8, nombre: 'Oso de anteojos', emoji: '', svg: '/marcas/08.svg' },
+  { id: 9, nombre: 'Delfín rosado', emoji: '', svg: '/marcas/09.svg' },
+  { id: 10, nombre: 'Frailejón', emoji: '', svg: '/marcas/10.svg' },
+  { id: 11, nombre: 'Mariposa morpho azul', emoji: '', svg: '/marcas/11.svg' },
+  { id: 12, nombre: 'Hormiga culona', emoji: '', svg: '/marcas/12.svg' },
+  { id: 13, nombre: 'Torre de la universidad', emoji: '', svg: '/marcas/13.svg', color: '#f5a300' },
+  { id: 14, nombre: 'Orquídea', emoji: '', svg: '/marcas/14.svg' },
+  { id: 15, nombre: 'Guacamaya', emoji: '', svg: '/marcas/15.svg' },
+  { id: 16, nombre: 'Tucán', emoji: '', svg: '/marcas/16.svg' },
+  { id: 17, nombre: 'Gallito de roca', emoji: '', svg: '/marcas/17.svg' },
+  { id: 18, nombre: 'Jaguar', emoji: '', svg: '/marcas/18.svg' },
+  { id: 19, nombre: 'Planta de café', emoji: '', svg: '/marcas/19.svg' },
+  { id: 20, nombre: 'Ballena jorobada', emoji: '', svg: '/marcas/20.svg' },
 ]
 
 // Lista plana de las 9 paradas en orden (1..9). No editar: se calcula sola.

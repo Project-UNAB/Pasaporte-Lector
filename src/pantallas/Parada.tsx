@@ -1,5 +1,6 @@
 import { useMemo, useState, type FormEvent } from 'react'
 import { Link, Navigate, useParams } from 'react-router'
+import { ArrowLeft, Ban, Check, CheckCircle2, MapPin, Navigation, Radio, Search } from 'lucide-react'
 import { bloques, config, paradas } from '../contenido.js'
 import { MapaCampus } from '../componentes/MapaCampus'
 import { Reloj } from '../componentes/Reloj'
@@ -120,52 +121,72 @@ export default function Parada() {
     <main className="pantalla parada">
       <div className="parada-cabeza">
         <Link to="/mapa" className="volver" aria-label="Volver al mapa">
-          ←
+          <ArrowLeft size={18} strokeWidth={1.75} aria-hidden="true" />
         </Link>
         <span className="chip">
           Bloque {parada.bloqueIndice + 1} · {bloque.nombre}
         </span>
       </div>
 
-      <MapaCampus completadas={completadas} actual={id} posicion={posicion} enfocar={id} alto={190} />
+      <MapaCampus completadas={completadas} actual={id} posicion={posicion} enfocar={id} alto={180} />
 
       <div className="minirruta" aria-hidden="true">
         {bloque.paradas.map((p, i) => (
           <span key={p.id} className={completadas.has(p.id) ? 'hecha' : p.id === id ? 'actual' : ''}>
-            {completadas.has(p.id) ? '✓' : i + 1}
+            {completadas.has(p.id) ? <Check size={14} strokeWidth={2.25} aria-hidden="true" /> : i + 1}
           </span>
         ))}
       </div>
 
-      <section className="tarjeta">
       {ignorarUbicacion && (
         <p className="aviso info" role="note">
           Modo pruebas: «Ya llegué» funciona aunque estés lejos.
         </p>
       )}
 
+      <section className="tarjeta">
         <span className="chip">
           Parada {parada.indiceEnBloque + 1} de {bloque.paradas.length}
         </span>
-        <h2 style={{ marginTop: 6 }}>{parada.lugar !== 'Por definir' ? parada.lugar : `Parada ${parada.posicion}`}</h2>
+        <h2 style={{ marginTop: 8 }}>{parada.lugar !== 'Por definir' ? parada.lugar : `Parada ${parada.posicion}`}</h2>
         <p className="mut">{parada.pista}</p>
         <p className={`estado-ubicacion${tecladoActivo ? ' ok' : ''}`}>
-          {tecladoActivo
-            ? '✅ Ya estás aquí'
-            : distancia === null
-              ? errorUbicacion?.code === 1
-                ? '🚫 La ubicación está bloqueada. Actívala en los ajustes del navegador o toca “Ya llegué” para pedir ayuda.'
-                : '📡 Buscando tu ubicación…'
-              : distancia <= radio
-                ? '📍 Estás cerca. Toca “Ya llegué”.'
-                : `🚶 Estás a unos ${distancia} m`}
+          {tecladoActivo ? (
+            <>
+              <CheckCircle2 size={16} strokeWidth={1.75} aria-hidden="true" />
+              <span>Ya estás aquí</span>
+            </>
+          ) : distancia === null ? (
+            errorUbicacion?.code === 1 ? (
+              <>
+                <Ban size={16} strokeWidth={1.75} aria-hidden="true" />
+                <span>La ubicación está bloqueada. Actívala en los ajustes del navegador o toca “Ya llegué” para pedir ayuda.</span>
+              </>
+            ) : (
+              <>
+                <Radio size={16} strokeWidth={1.75} aria-hidden="true" />
+                <span>Buscando tu ubicación…</span>
+              </>
+            )
+          ) : distancia <= radio ? (
+            <>
+              <MapPin size={16} strokeWidth={1.75} aria-hidden="true" />
+              <span>Estás cerca. Toca “Ya llegué”.</span>
+            </>
+          ) : (
+            <>
+              <Navigation size={16} strokeWidth={1.75} aria-hidden="true" />
+              <span>Estás a unos {distancia} m</span>
+            </>
+          )}
         </p>
       </section>
 
       {tecladoActivo ? (
         <form onSubmit={enviar} className="tarjeta aparece">
           <label htmlFor="palabra" className="etiqueta">
-            🔎 Palabra clave del póster
+            <Search size={15} strokeWidth={1.75} aria-hidden="true" />
+            <span>Palabra clave del póster</span>
           </label>
           <input
             id="palabra"
@@ -188,7 +209,10 @@ export default function Parada() {
         </form>
       ) : (
         <div className="tarjeta suave">
-          <b>🔎 Dato clave</b>
+          <b className="etiqueta">
+            <Search size={15} strokeWidth={1.75} aria-hidden="true" />
+            <span>Dato clave</span>
+          </b>
           <p className="mut">Se desbloquea al llegar al póster y escribir su palabra.</p>
         </div>
       )}

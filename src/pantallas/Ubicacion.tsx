@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router'
+import { LifeBuoy, Lock, Map, MapPin } from 'lucide-react'
 import { guardar } from '../lib/almacen'
 import { pedirPosicion } from '../lib/geo'
 
@@ -27,31 +28,35 @@ export function Ubicacion() {
   }
 
   return (
-    <main className="pantalla">
-      <div className="centro" style={{ marginTop: 24 }}>
-        <div
-          aria-hidden="true"
-          style={{ width: 110, height: 110, borderRadius: '50%', background: 'var(--g1)', display: 'grid', placeItems: 'center', fontSize: 54 }}
-        >
-          📍
+    <main className="pantalla ubicacion">
+      <div className="encabezado-centrado" style={{ marginTop: 12, marginBottom: 12 }}>
+        <div className="icono-circulo radar" aria-hidden="true" style={{ marginBottom: 16 }}>
+          <MapPin size={26} strokeWidth={1.75} aria-hidden="true" />
         </div>
+        <h1 className="titulo">Activa tu ubicación</h1>
+        <p className="mut">
+          La usamos solo para saber si llegaste al póster de cada parada. Al estar cerca se abre el teclado para escribir la
+          palabra clave.
+        </p>
       </div>
-      <h1 className="titulo" style={{ marginTop: 18, textAlign: 'center' }}>
-        Activa tu ubicación
-      </h1>
-      <p className="mut" style={{ textAlign: 'center' }}>
-        La usamos solo para saber si llegaste al póster de cada parada. Al estar cerca se abre el teclado para escribir la
-        palabra clave.
-      </p>
 
       <div className="tip">
-        <b>🗺️</b> Verás en el mapa dónde estás y a dónde ir.
+        <span className="tip-icono" aria-hidden="true">
+          <Map size={18} strokeWidth={1.75} aria-hidden="true" />
+        </span>
+        <span>Verás en el mapa dónde estás y a dónde ir.</span>
       </div>
       <div className="tip">
-        <b>🔒</b> Solo se guarda tu posición cuando tocas “Ya llegué”.
+        <span className="tip-icono" aria-hidden="true">
+          <Lock size={18} strokeWidth={1.75} aria-hidden="true" />
+        </span>
+        <span>Solo se guarda tu posición cuando tocas “Ya llegué”.</span>
       </div>
       <div className="tip">
-        <b>🛟</b> Si el GPS falla, aparecerá una ayuda para seguir jugando.
+        <span className="tip-icono" aria-hidden="true">
+          <LifeBuoy size={18} strokeWidth={1.75} aria-hidden="true" />
+        </span>
+        <span>Si el GPS falla, aparecerá una ayuda para seguir jugando.</span>
       </div>
 
       {negado && (

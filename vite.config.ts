@@ -23,8 +23,8 @@ export default defineConfig(({ command, isPreview }) => ({
         scope: '/',
         display: 'standalone',
         orientation: 'portrait',
-        background_color: '#0b3d34',
-        theme_color: '#0f6b57',
+        background_color: '#fafafa',
+        theme_color: '#0f5243',
         icons: [
           { src: 'pwa-64x64.png', sizes: '64x64', type: 'image/png' },
           { src: 'pwa-192x192.png', sizes: '192x192', type: 'image/png' },

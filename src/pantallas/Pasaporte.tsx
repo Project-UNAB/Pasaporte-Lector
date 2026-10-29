@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router'
+import { Download } from 'lucide-react'
 import { bloques, config, marcasDeAgua, paradas, textos } from '../contenido.js'
+import { IconoBloque } from '../componentes/Iconos'
 import { useJuego } from '../juego'
 import { supabase } from '../lib/supabase'
 import { fechaSello } from '../lib/tiempo'
@@ -87,15 +89,11 @@ export default function Pasaporte() {
       />
     ) : marca.svg ? (
       <div className={`marca ${clase}`} style={{ backgroundImage: `url(${marca.svg})` }} aria-hidden="true" />
-    ) : (
-      <div className={`marca emoji ${clase}`} aria-hidden="true">
-        {marca.emoji}
-      </div>
-    )
+    ) : null
 
   return (
     <main className="pantalla noche pasaporte" onContextMenu={(e) => e.preventDefault()}>
-      <h1 className="titulo">¡Viaje completado! 🎉</h1>
+      <h1 className="titulo" style={{ textAlign: 'center' }}>¡Viaje completado!</h1>
 
       <section className="hoja aparece" aria-label="Página de datos del pasaporte">
         <div className="franja" />
@@ -125,7 +123,9 @@ export default function Pasaporte() {
         <div className={`sellos${sellos.length > 3 ? ' muchos' : ''}`}>
           {sellos.map((s, i) => (
             <div key={s.id} className="sello" style={{ color: COLORES[i % 3], rotate: `${[-8, 6, -4][i % 3]}deg` }}>
-              <b aria-hidden="true">{s.icono}</b>
+              <b aria-hidden="true">
+                <IconoBloque icono={s.icono} size={sellos.length > 3 ? 18 : 22} strokeWidth={1.75} />
+              </b>
               {s.nombre}
               <br />
               {s.fecha ? fechaSello(s.fecha) : ''}
@@ -139,7 +139,14 @@ export default function Pasaporte() {
       </p>
 
       <button className="btn dorado" style={{ marginTop: 14 }} onClick={descargar} disabled={descargando}>
-        {descargando ? 'Creando imagen…' : '📥 Descargar como foto'}
+        {descargando ? (
+          'Creando imagen…'
+        ) : (
+          <>
+            <Download size={18} strokeWidth={1.75} aria-hidden="true" />
+            <span>Descargar como foto</span>
+          </>
+        )}
       </button>
       {errorDescarga && (
         <p className="aviso error" role="alert">
@@ -153,7 +160,9 @@ export default function Pasaporte() {
           {paradas.map((pa) => (
             <li key={pa.id}>
               <Link to={`/tarjeta/${pa.id}`}>
-                <span aria-hidden="true">{bloques[pa.bloqueIndice].icono}</span>
+                <span className="lectura-icono" aria-hidden="true">
+                  <IconoBloque icono={bloques[pa.bloqueIndice].icono} size={18} strokeWidth={1.75} />
+                </span>
                 <span>
                   <b>{pa.tarjeta.autor}</b>
                   <small>{pa.tarjeta.titulo}</small>

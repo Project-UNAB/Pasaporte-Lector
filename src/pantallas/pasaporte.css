@@ -7,6 +7,7 @@
 
 .pasaporte .hoja {
   border-radius: 16px;
+  border: 1px solid rgba(11, 61, 52, 0.14);
   background-color: #f3f1df;
   background-image: repeating-radial-gradient(circle at 20% 120%, transparent 0 7px, rgba(47, 165, 126, 0.11) 7px 8px);
   color: #0b3d34;
@@ -44,13 +45,6 @@
 .pasaporte .marca.tenida {
   -webkit-mask: center / contain no-repeat;
   mask: center / contain no-repeat;
-}
-
-.pasaporte .marca.emoji {
-  display: grid;
-  place-items: center;
-  font-size: 110px;
-  filter: saturate(0.6);
 }
 
 .pasaporte .marca.derecha {
@@ -138,50 +132,71 @@
   font-size: 9px;
 }
 
+.pasaporte .sello b {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 3px;
+  line-height: 1;
+}
+
 .pasaporte .lecturas {
-  margin-top: 22px;
+  margin-top: var(--sp-6);
+  padding-top: var(--sp-5);
+  border-top: 1px solid var(--linea);
 }
 
 .pasaporte .lecturas h2 {
-  color: var(--g2);
+  color: var(--sub);
+  font-size: 12px;
+  letter-spacing: 0.08em;
 }
 
 .pasaporte .lecturas ul {
   list-style: none;
   padding: 0;
-  margin-top: 8px;
+  margin-top: var(--sp-3);
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: var(--sp-2);
 }
 
 .pasaporte .lecturas a {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 10px 12px;
-  border-radius: 14px;
-  background: rgba(255, 255, 255, 0.08);
-  color: #fff;
+  gap: var(--sp-3);
+  padding: 11px 14px;
+  border-radius: var(--radio);
+  background: var(--card);
+  border: 1px solid var(--linea);
+  color: var(--ink);
   text-decoration: none;
 }
 
-.pasaporte .lecturas a > span:first-child {
-  font-size: 22px;
+.pasaporte .lecturas a:active {
+  background: var(--g1);
+  border-color: var(--g7);
+}
+
+.pasaporte .lecturas .lectura-icono {
+  width: 34px;
+  height: 34px;
+  border-radius: var(--radio-sm);
+  background: var(--g1);
+  color: var(--g7);
+  display: grid;
+  place-items: center;
+  flex: none;
 }
 
 .pasaporte .lecturas b {
   display: block;
-  font-size: 15px;
+  font-size: 14.5px;
+  font-weight: 600;
+  color: var(--ink);
 }
 
 .pasaporte .lecturas small {
-  opacity: 0.8;
-  font-weight: 600;
-}
-
-.pasaporte .sello b {
-  font-size: 24px;
-  display: block;
-  line-height: 1.1;
+  color: var(--sub);
+  font-weight: 400;
+  font-size: 13px;
 }

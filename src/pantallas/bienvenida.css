@@ -1,52 +1,108 @@
 .bienvenida {
+  justify-content: space-between;
   align-items: center;
   text-align: center;
-  padding-top: calc(56px + var(--arriba));
+}
+
+.bienvenida-cuerpo {
+  margin-top: auto;
+  margin-bottom: auto;
+  padding: var(--sp-6) var(--sp-4);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
 }
 
 .bienvenida .libro {
-  width: 128px;
-  height: 128px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.14);
+  width: 68px;
+  height: 68px;
+  border-radius: 20px;
+  background: var(--g1);
+  border: 1px solid var(--g2);
+  color: var(--g7);
   display: grid;
   place-items: center;
-  font-size: 62px;
+  margin-bottom: var(--sp-5);
+  position: relative;
+  animation:
+    aparecerEmblema 0.45s cubic-bezier(0.22, 1, 0.36, 1) both,
+    levitarSuave 3.8s ease-in-out 0.45s infinite alternate;
+}
+
+.bienvenida .libro::after {
+  content: '';
+  position: absolute;
+  inset: -6px;
+  border-radius: 24px;
+  border: 1px solid var(--g2);
+  opacity: 0.55;
+  animation: haloBienvenida 3.8s ease-in-out infinite alternate;
+}
+
+@keyframes haloBienvenida {
+  from {
+    transform: scale(0.96);
+    opacity: 0.3;
+  }
+  to {
+    transform: scale(1.06);
+    opacity: 0.7;
+  }
+}
+
+.bienvenida-marca {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--g7);
+  margin-bottom: var(--sp-2);
+  animation: aparecer 0.35s cubic-bezier(0.22, 1, 0.36, 1) 0.06s both;
 }
 
 .bienvenida h1 {
-  font-size: clamp(34px, 11vw, 44px);
-  letter-spacing: 0.5px;
-  margin-top: 28px;
+  font-size: clamp(28px, 8.5vw, 36px);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 1.12;
+  color: var(--ink);
   text-wrap: balance;
+  max-width: 340px;
+  text-shadow:
+    0 0 18px var(--paper),
+    0 0 8px var(--paper),
+    0 0 3px var(--paper);
+  animation: aparecer 0.38s cubic-bezier(0.22, 1, 0.36, 1) 0.12s both;
 }
 
 .bienvenida p {
-  opacity: 0.9;
-  margin-top: 12px;
-  font-weight: 700;
-  font-size: 17px;
-  max-width: 300px;
+  color: var(--sub);
+  margin-top: var(--sp-3);
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 1.5;
+  max-width: 320px;
+  text-shadow:
+    0 0 16px var(--paper),
+    0 0 7px var(--paper),
+    0 0 3px var(--paper);
+  animation: aparecer 0.4s cubic-bezier(0.22, 1, 0.36, 1) 0.18s both;
 }
 
 .bienvenida .pie {
   width: 100%;
-}
-
-/* Botón secundario sobre el fondo verde: contorno blanco. */
-.bienvenida .btn.claro {
-  background: transparent;
-  color: #fff;
-  border: 2px solid rgba(255, 255, 255, 0.85);
-  box-shadow: none;
-}
-
-.bienvenida .btn.claro:active {
-  transform: none;
-  background: rgba(255, 255, 255, 0.12);
+  animation: aparecer 0.42s cubic-bezier(0.22, 1, 0.36, 1) 0.24s both;
 }
 
 .bienvenida small {
-  opacity: 0.85;
-  font-weight: 700;
+  display: block;
+  text-align: center;
+  color: var(--sub);
+  font-size: 12.5px;
+  font-weight: 400;
+  margin-top: var(--sp-1);
+  text-shadow:
+    0 0 10px var(--paper),
+    0 0 5px var(--paper);
 }

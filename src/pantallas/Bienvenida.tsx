@@ -1,4 +1,5 @@
 import { Link } from 'react-router'
+import { BookOpen } from 'lucide-react'
 import { textos } from '../contenido.js'
 import './bienvenida.css'
 
@@ -7,19 +8,22 @@ const navegadorInterno = /Instagram|FBAN|FBAV|FB_IAB|TikTok|musical_ly|Line\//i.
 
 export function Bienvenida() {
   return (
-    <main className="pantalla oscura bienvenida">
-      <div className="libro aparece" aria-hidden="true">
-        📖
+    <main className="pantalla bienvenida">
+      <div className="bienvenida-cuerpo aparece">
+        <div className="libro" aria-hidden="true">
+          <BookOpen size={28} strokeWidth={1.75} aria-hidden="true" />
+        </div>
+        <span className="bienvenida-marca">{textos.nombreProyecto} · UNAB</span>
+        <h1>{textos.bienvenidaTitulo}</h1>
+        <p>{textos.bienvenidaTexto}</p>
+        {navegadorInterno && (
+          <p className="aviso info" role="alert">
+            Para usar la cámara y el mapa, abre esta página en Chrome o Safari: toca ⋯ y elige “Abrir en el navegador”.
+          </p>
+        )}
       </div>
-      <h1>{textos.bienvenidaTitulo}</h1>
-      <p>{textos.bienvenidaTexto}</p>
-      {navegadorInterno && (
-        <p className="aviso info" role="alert">
-          Para usar la cámara y el mapa, abre esta página en Chrome o Safari: toca ⋯ y elige “Abrir en el navegador”.
-        </p>
-      )}
       <div className="pie">
-        <Link to="/ingresar" className="btn dorado">
+        <Link to="/ingresar" className="btn">
           {textos.bienvenidaBoton}
         </Link>
         <Link to="/ingresar?modo=entrar" className="btn claro">

@@ -1,4 +1,5 @@
 import { useState, type FormEvent } from 'react'
+import { Landmark } from 'lucide-react'
 import { textos } from '../contenido.js'
 import { useJuego } from '../juego'
 import { mensajeError } from '../lib/errores'
@@ -41,25 +42,21 @@ export function Biblioteca() {
   }
 
   return (
-    <main className="pantalla oscura" style={{ textAlign: 'center' }}>
-      <div className="centro" style={{ marginTop: 28 }}>
-        <div
-          className="aparece"
-          aria-hidden="true"
-          style={{ width: 120, height: 120, borderRadius: '50%', background: 'rgba(255,255,255,.14)', display: 'grid', placeItems: 'center', fontSize: 58 }}
-        >
-          🏛️
+    <main className="pantalla biblioteca">
+      <div className="encabezado-centrado" style={{ marginTop: 20 }}>
+        <div className="icono-circulo levita" aria-hidden="true" style={{ marginBottom: 16 }}>
+          <Landmark size={26} strokeWidth={1.75} aria-hidden="true" />
         </div>
+        <h1 className="titulo">
+          ¡Completaste las {estado?.total ?? 9} paradas!
+        </h1>
+        <p className="mut">
+          {textos.bibliotecaInstrucciones}
+        </p>
       </div>
-      <h1 className="titulo" style={{ marginTop: 20 }}>
-        ¡Completaste las {estado?.total ?? 9} paradas!
-      </h1>
-      <p className="mut" style={{ fontSize: 16, marginTop: 10 }}>
-        {textos.bibliotecaInstrucciones}
-      </p>
 
       {personal ? (
-        <form onSubmit={activar} className="tarjeta aparece" style={{ color: 'var(--ink)', textAlign: 'left', marginTop: 20 }}>
+        <form onSubmit={activar} className="tarjeta aparece" style={{ marginTop: 20 }}>
           <label htmlFor="codigo-bib" className="etiqueta">
             Código del equipo de la biblioteca
           </label>
@@ -91,7 +88,9 @@ export function Biblioteca() {
           <button className="btn dorado" onClick={() => setPersonal(true)}>
             Soy del equipo de la biblioteca
           </button>
-          <small style={{ opacity: 0.85, fontWeight: 700 }}>Entrega tu celular al personal de la biblioteca.</small>
+          <small className="mut" style={{ textAlign: 'center', display: 'block' }}>
+            Entrega tu celular al personal de la biblioteca.
+          </small>
         </div>
       )}
     </main>

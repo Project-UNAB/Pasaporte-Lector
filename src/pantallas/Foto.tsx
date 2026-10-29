@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { Focus, ScanFace, Sun, User } from 'lucide-react'
 import { Pasos } from '../componentes/Pasos'
 import { useJuego, type EstadoServidor } from '../juego'
 import { mensajeError } from '../lib/errores'
@@ -112,25 +113,40 @@ export function Foto() {
   return (
     <main className="pantalla foto">
       <Pasos actual={3} />
-      <h1 className="titulo">Tu foto de viajero</h1>
-      <p className="mut">Se toma ahora con la cámara. Aparecerá en tu pasaporte.</p>
+      <div className="encabezado-centrado aparece">
+        <h1 className="titulo">Tu foto de viajero</h1>
+        <p className="mut">Se toma ahora con la cámara. Aparecerá en tu pasaporte.</p>
+      </div>
 
       <div className={`ovalo${fase === 'camara' ? ' vivo' : ''}`}>
         {fase === 'camara' && <video ref={video} playsInline muted autoPlay />}
         {(fase === 'revisar' || fase === 'subiendo') && foto && <img src={foto.url} alt="Tu foto" />}
-        {fase === 'consejos' && <span aria-hidden="true">🙂</span>}
+        {fase === 'consejos' && (
+          <span className="ovalo-icono" aria-hidden="true">
+            <User size={44} strokeWidth={1.5} aria-hidden="true" />
+          </span>
+        )}
       </div>
 
       {fase === 'consejos' && (
-        <div>
+        <div className="foto-consejos">
           <div className="tip">
-            <b>💡</b> Busca luz de frente
+            <span className="tip-icono" aria-hidden="true">
+              <Sun size={18} strokeWidth={1.75} aria-hidden="true" />
+            </span>
+            <span>Busca luz de frente</span>
           </div>
           <div className="tip">
-            <b>🧢</b> Sin gorra ni gafas oscuras
+            <span className="tip-icono" aria-hidden="true">
+              <ScanFace size={18} strokeWidth={1.75} aria-hidden="true" />
+            </span>
+            <span>Sin gorra ni gafas oscuras</span>
           </div>
           <div className="tip">
-            <b>🎯</b> Rostro centrado en el óvalo
+            <span className="tip-icono" aria-hidden="true">
+              <Focus size={18} strokeWidth={1.75} aria-hidden="true" />
+            </span>
+            <span>Rostro centrado en el óvalo</span>
           </div>
         </div>
       )}
@@ -148,7 +164,7 @@ export function Foto() {
           </button>
         )}
         {fase === 'camara' && (
-          <button className="btn dorado" onClick={tomar}>
+          <button className="btn acento-dorado" onClick={tomar}>
             Tomar foto
           </button>
         )}

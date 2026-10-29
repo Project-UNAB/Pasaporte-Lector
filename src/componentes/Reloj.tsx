@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { Clock } from 'lucide-react'
 import { useJuego } from '../juego'
 import { formatoRestante, formatoTranscurrido } from '../lib/tiempo'
 
@@ -25,7 +26,10 @@ export function Reloj({ detalle = false }: { detalle?: boolean }) {
   const urgente = restante < 2 * 3600000
   return (
     <span className={`reloj${urgente ? ' urgente' : ''}`} role="timer" aria-live="off">
-      ⏳ {detalle ? `Llevas ${formatoTranscurrido(ahora - Date.parse(p.inicio))} · ` : ''}te quedan {formatoRestante(restante)}
+      <Clock size={14} strokeWidth={1.75} aria-hidden="true" />
+      <span>
+        {detalle ? `Llevas ${formatoTranscurrido(ahora - Date.parse(p.inicio))} · ` : ''}te quedan {formatoRestante(restante)}
+      </span>
     </span>
   )
 }

@@ -2,28 +2,33 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-bottom: 10px;
+  margin-bottom: var(--sp-3);
 }
 
 .volver {
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: var(--g1);
-  color: var(--g7);
+  background: var(--card);
+  border: 1px solid var(--linea);
+  color: var(--ink);
   display: grid;
   place-items: center;
   text-decoration: none;
-  font-weight: 800;
-  font-size: 20px;
+  flex: none;
+}
+
+.volver:active {
+  background: var(--g1);
+  border-color: var(--g7);
 }
 
 .minirruta {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 34px;
-  margin: 12px 0 2px;
+  gap: 36px;
+  margin: var(--sp-3) 0 2px;
   position: relative;
 }
 
@@ -33,48 +38,76 @@
   left: 25%;
   right: 25%;
   top: 50%;
-  border-top: 3px dotted var(--g7);
+  border-top: 1px dashed var(--linea-fuerte);
   z-index: 0;
 }
 
 .minirruta span {
   position: relative;
   z-index: 1;
-  width: 32px;
-  height: 32px;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
   display: grid;
   place-items: center;
-  background: #b9c4c0;
-  color: #fff;
-  font-weight: 800;
-  font-family: var(--fuente-titulo);
+  background: var(--card);
+  border: 1px solid var(--linea-fuerte);
+  color: var(--sub);
+  font-weight: 600;
+  font-size: 12.5px;
+  font-family: var(--fuente);
 }
 
 .minirruta span.hecha {
   background: var(--g7);
+  border-color: var(--g7);
+  color: #ffffff;
 }
 
 .minirruta span.actual {
-  background: var(--gold);
-  color: #3a2a00;
-  box-shadow: 0 0 0 5px rgba(234, 184, 60, 0.3);
+  background: var(--gold-suave);
+  border-color: var(--gold-sombra);
+  color: var(--gold-ink);
+  box-shadow: 0 0 0 3px rgba(234, 184, 60, 0.22);
+  animation: pulsoPasoActual 2.2s ease-in-out infinite alternate;
+}
+
+@keyframes pulsoPasoActual {
+  from {
+    box-shadow: 0 0 0 2px rgba(234, 184, 60, 0.16);
+  }
+  to {
+    box-shadow: 0 0 0 6px rgba(234, 184, 60, 0.32);
+  }
 }
 
 .estado-ubicacion {
-  margin-top: 8px;
-  font-weight: 800;
-  font-size: 14px;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-top: var(--sp-3);
+  padding-top: var(--sp-3);
+  border-top: 1px solid var(--linea);
+  font-weight: 500;
+  font-size: 13.5px;
+  line-height: 1.4;
   color: var(--sub);
+}
+
+.estado-ubicacion svg {
+  flex: none;
+  margin-top: 2px;
+  color: var(--g7);
 }
 
 .estado-ubicacion.ok {
   color: var(--g7);
+  font-weight: 600;
 }
 
 .tarjeta.suave {
-  background: var(--g1);
-  box-shadow: none;
+  background: var(--bg);
+  border-style: dashed;
 }
 
 .parada .pie {
