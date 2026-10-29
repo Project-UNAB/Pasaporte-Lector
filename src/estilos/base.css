@@ -1054,3 +1054,140 @@ select.entrada {
   outline: 2px solid var(--g7);
   outline-offset: 2px;
 }
+
+/* Botón de perfil: arriba a la derecha, alineado con la columna de la app */
+.perfil {
+  position: fixed;
+  top: calc(14px + var(--arriba));
+  right: max(16px, calc((100vw - 480px) / 2 + 16px));
+  z-index: 1200;
+}
+
+.perfil.en-linea {
+  position: relative;
+  top: auto;
+  right: auto;
+  z-index: 5;
+  flex: none;
+}
+
+.perfil-boton {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--card);
+  border: 1px solid var(--linea);
+  color: var(--ink);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.perfil-boton:active,
+.perfil-boton[aria-expanded='true'] {
+  background: var(--g1);
+  border-color: var(--g7);
+}
+
+.perfil-boton:focus-visible,
+.perfil-cerrar:focus-visible {
+  outline: 2px solid var(--g7);
+  outline-offset: 2px;
+}
+
+.perfil-panel {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: min(280px, calc(100vw - 32px));
+  padding: var(--sp-5) var(--sp-4) var(--sp-4);
+  background: var(--card);
+  border: 1px solid var(--linea);
+  border-radius: var(--radio);
+  box-shadow: 0 10px 30px rgba(17, 25, 23, 0.12);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 4px;
+  animation: perfilAparece 0.16s ease-out both;
+}
+
+@keyframes perfilAparece {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+
+.perfil-cerrar {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: transparent;
+  border: 0;
+  color: var(--sub);
+  cursor: pointer;
+}
+
+.perfil-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--g1);
+  color: var(--g7);
+  margin-bottom: var(--sp-2);
+}
+
+.perfil-nombre {
+  font-weight: 600;
+  color: var(--ink);
+  overflow-wrap: anywhere;
+}
+
+.perfil-correo {
+  font-size: 14px;
+  color: var(--sub);
+  overflow-wrap: anywhere;
+}
+
+.perfil-salir {
+  margin-top: var(--sp-3);
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .perfil-panel {
+    animation: none;
+  }
+}
+
+/* Con «Reducir movimiento» activado en el celular: sin animaciones decorativas (fondo, latidos, entradas). */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  /* El indicador de carga sí debe girar: es la única señal de que algo está pasando. */
+  .girando {
+    animation-duration: 1.5s !important;
+    animation-iteration-count: infinite !important;
+  }
+}

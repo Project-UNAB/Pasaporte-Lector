@@ -4,6 +4,7 @@ import { Check, ChevronDown, ChevronUp, LocateFixed, Lock } from 'lucide-react'
 import { bloques } from '../contenido.js'
 import { IconoBloque } from '../componentes/Iconos'
 import { MapaCampus } from '../componentes/MapaCampus'
+import { Perfil } from '../componentes/Perfil'
 import { Reloj } from '../componentes/Reloj'
 import { siguienteParada, useJuego } from '../juego'
 import { leer } from '../lib/almacen'
@@ -131,6 +132,7 @@ export default function Mapa() {
         <div className="mapa-cabeza-fila">
           <h1 className="titulo">Explora tu ruta</h1>
           <Reloj detalle />
+          <Perfil enLinea />
         </div>
         <div className="mapa-progreso">
           <div
