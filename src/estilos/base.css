@@ -1023,10 +1023,14 @@ select.entrada {
 /* Botón «Volver» arriba de cada pantalla */
 .volver-fila {
   display: flex;
-  align-self: flex-start;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-3);
+  align-self: stretch;
+  min-height: 44px;
   margin: -6px 0 var(--sp-3);
   position: relative;
-  z-index: 2;
+  z-index: 30;
 }
 
 .boton-volver {
@@ -1055,20 +1059,11 @@ select.entrada {
   outline-offset: 2px;
 }
 
-/* Botón de perfil: arriba a la derecha, alineado con la columna de la app */
+/* Botón de perfil: a la derecha de la barra superior de cada pantalla */
 .perfil {
-  position: fixed;
-  top: calc(14px + var(--arriba));
-  right: max(16px, calc((100vw - 480px) / 2 + 16px));
-  z-index: 1200;
-}
-
-.perfil.en-linea {
   position: relative;
-  top: auto;
-  right: auto;
-  z-index: 5;
   flex: none;
+  margin-left: auto;
 }
 
 .perfil-boton {

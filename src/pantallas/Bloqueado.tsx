@@ -1,4 +1,5 @@
 import { Hourglass } from 'lucide-react'
+import { Volver } from '../componentes/Volver'
 import { useJuego } from '../juego'
 
 export function Bloqueado() {
@@ -6,6 +7,7 @@ export function Bloqueado() {
   const hechas = estado?.completadas.length ?? 0
   return (
     <main className="pantalla bloqueado">
+      <Volver />
       <div className="encabezado-centrado" style={{ marginTop: 32 }}>
         <div className="icono-circulo reloj-arena" aria-hidden="true" style={{ marginBottom: 18 }}>
           <Hourglass size={26} strokeWidth={1.75} aria-hidden="true" />

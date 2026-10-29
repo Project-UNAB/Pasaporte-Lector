@@ -49,8 +49,16 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 8px;
-  flex-wrap: wrap;
+  gap: 10px;
+}
+
+/* Título y reloj en columna a la izquierda; el perfil queda fijo a la derecha en cualquier ancho. */
+.mapa-cabeza-texto {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  min-width: 0;
 }
 
 .mapa-cabeza .titulo {

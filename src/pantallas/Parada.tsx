@@ -3,6 +3,7 @@ import { Link, Navigate, useParams } from 'react-router'
 import { ArrowLeft, Ban, Check, CheckCircle2, MapPin, Navigation, Radio, Search } from 'lucide-react'
 import { bloques, config, paradas } from '../contenido.js'
 import { MapaCampus } from '../componentes/MapaCampus'
+import { Perfil } from '../componentes/Perfil'
 import { Reloj } from '../componentes/Reloj'
 import { paradaCompletada, siguienteParada, useJuego, type EstadoServidor } from '../juego'
 import { mensajeError } from '../lib/errores'
@@ -140,6 +141,7 @@ export default function Parada() {
         <span className="chip">
           Bloque {parada.bloqueIndice + 1} · {bloque.nombre}
         </span>
+        <Perfil />
       </div>
 
       <MapaCampus completadas={completadas} actual={id} posicion={posicion} enfocar={id} alto={180} />

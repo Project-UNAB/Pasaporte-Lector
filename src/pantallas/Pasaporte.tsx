@@ -3,6 +3,7 @@ import { Link } from 'react-router'
 import { Download } from 'lucide-react'
 import { bloques, config, marcasDeAgua, paradas, textos } from '../contenido.js'
 import { IconoBloque } from '../componentes/Iconos'
+import { Volver } from '../componentes/Volver'
 import { useJuego } from '../juego'
 import { supabase } from '../lib/supabase'
 import { fechaSello } from '../lib/tiempo'
@@ -93,6 +94,7 @@ export default function Pasaporte() {
 
   return (
     <main className="pantalla noche pasaporte" onContextMenu={(e) => e.preventDefault()}>
+      <Volver />
       <h1 className="titulo" style={{ textAlign: 'center' }}>¡Viaje completado!</h1>
 
       <section className="hoja aparece" aria-label="Página de datos del pasaporte">

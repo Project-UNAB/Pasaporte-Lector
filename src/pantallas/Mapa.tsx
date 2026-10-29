@@ -130,9 +130,11 @@ export default function Mapa() {
 
       <header ref={cabezaRef} className="mapa-cabeza">
         <div className="mapa-cabeza-fila">
-          <h1 className="titulo">Explora tu ruta</h1>
-          <Reloj detalle />
-          <Perfil enLinea />
+          <div className="mapa-cabeza-texto">
+            <h1 className="titulo">Explora tu ruta</h1>
+            <Reloj detalle />
+          </div>
+          <Perfil />
         </div>
         <div className="mapa-progreso">
           <div

@@ -15,7 +15,6 @@ import { Bloqueado } from './pantallas/Bloqueado'
 import { SinConfigurar } from './pantallas/SinConfigurar'
 import { SinConexion } from './pantallas/SinConexion'
 import { AvisoConexion } from './componentes/AvisoConexion'
-import { Perfil } from './componentes/Perfil'
 
 const Mapa = lazy(() => import('./pantallas/Mapa'))
 const Parada = lazy(() => import('./pantallas/Parada'))
@@ -58,7 +57,6 @@ export function App() {
   return (
     <Suspense fallback={<Cargando />}>
       <AvisoConexion />
-      <Perfil />
       <Routes>
         <Route path="/" element={<Solo etapas={['anonimo']}><Bienvenida /></Solo>} />
         <Route path="/ingresar" element={<Solo etapas={['anonimo', 'consentimiento']}><Ingresar /></Solo>} />

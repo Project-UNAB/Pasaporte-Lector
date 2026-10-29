@@ -6,11 +6,8 @@ import { useJuego } from '../juego'
 /** Etapas con sesión iniciada en las que se muestra el botón de perfil. */
 const CON_SESION = ['consentimiento', 'datos', 'foto', 'juego', 'biblioteca', 'pasaporte', 'bloqueado']
 
-/**
- * Botón de perfil arriba a la derecha: muestra quién inició sesión y permite cerrarla.
- * `enLinea` lo pone dentro de un encabezado propio (el del mapa) en vez de flotar sobre la pantalla.
- */
-export function Perfil({ enLinea = false }: { enLinea?: boolean }) {
+/** Botón de perfil de la barra superior: muestra quién inició sesión y permite cerrarla. */
+export function Perfil() {
   const { sesion, estado, etapa, salir } = useJuego()
   const { pathname } = useLocation()
   const navegar = useNavigate()
@@ -32,8 +29,7 @@ export function Perfil({ enLinea = false }: { enLinea?: boolean }) {
 
   useEffect(() => setAbierto(false), [pathname])
 
-  // El mapa lo pone en su propio encabezado; ahí no flota otro encima.
-  if (!sesion || !CON_SESION.includes(etapa) || (!enLinea && pathname === '/mapa')) return null
+  if (!sesion || !CON_SESION.includes(etapa)) return null
 
   async function cerrarSesion() {
     setSaliendo(true)
@@ -50,7 +46,7 @@ export function Perfil({ enLinea = false }: { enLinea?: boolean }) {
   const correo = sesion.user.email
 
   return (
-    <div ref={caja} className={`perfil${enLinea ? ' en-linea' : ''}`}>
+    <div ref={caja} className="perfil">
       <button
         type="button"
         className="perfil-boton"

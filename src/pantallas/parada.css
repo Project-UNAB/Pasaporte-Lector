@@ -3,6 +3,16 @@
   align-items: center;
   gap: 10px;
   margin-bottom: var(--sp-3);
+  /* Por encima del mapa (Leaflet usa capas altas) para que el panel del perfil no quede tapado. */
+  position: relative;
+  z-index: 1100;
+}
+
+.parada-cabeza .chip {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .volver {
