@@ -6,7 +6,7 @@ import { MapaCampus } from '../componentes/MapaCampus'
 import { Reloj } from '../componentes/Reloj'
 import { paradaCompletada, siguienteParada, useJuego, type EstadoServidor } from '../juego'
 import { mensajeError } from '../lib/errores'
-import { distanciaMetros, ignorarUbicacion, pedirPosicion, type Posicion } from '../lib/geo'
+import { codigoError, distanciaMetros, ignorarUbicacion, instruccionesPermiso, pedirPosicion, type Posicion } from '../lib/geo'
 import { supabase } from '../lib/supabase'
 import { useUbicacion } from '../lib/useUbicacion'
 import './parada.css'
@@ -16,7 +16,7 @@ type Resultado = 'correcta' | 'incorrecta' | 'espera' | 'expirado' | 'fuera_de_o
 export default function Parada() {
   const { id = '' } = useParams()
   const { estado, aplicar, refrescar } = useJuego()
-  const { posicion, error: errorUbicacion } = useUbicacion()
+  const { posicion, error: errorUbicacion, esperandoPermiso, reiniciar } = useUbicacion(true, { esperarToque: true })
   const [cerca, setCerca] = useState(false)
   const [buscando, setBuscando] = useState(false)
   const [palabra, setPalabra] = useState('')
@@ -55,8 +55,18 @@ export default function Parada() {
     setAviso(null)
     setBuscando(true)
     let pos: Posicion | null = posicion && Date.now() - posicion.fecha < 10000 ? posicion : null
+    let codigo = 0
     try {
-      if (!pos && !ignorarUbicacion) pos = await pedirPosicion().catch(() => null)
+      // Se pide directo desde el toque para que iPhone muestre el permiso; si falla, sirve la última posición conocida.
+      if (!pos && !ignorarUbicacion) {
+        try {
+          pos = await pedirPosicion()
+          reiniciar()
+        } catch (err) {
+          codigo = codigoError(err)
+          pos = posicion
+        }
+      }
       if (ignorarUbicacion || (pos && distanciaMetros(pos, parada!) <= radio)) {
         setCerca(true)
         return
@@ -66,7 +76,9 @@ export default function Parada() {
         tipo: 'info',
         texto: pos
           ? `Estás lejos de la parada (a unos ${Math.round(distanciaMetros(pos, parada!))} m). Acércate al póster e intenta de nuevo.`
-          : 'No pudimos obtener tu ubicación. Revisa que esté activada e intenta de nuevo.',
+          : codigo === 1
+            ? instruccionesPermiso()
+            : 'No logramos señal de GPS. Sal a un lugar abierto, espera unos segundos e intenta de nuevo.',
       })
     } catch (err) {
       setAviso({ tipo: 'error', texto: mensajeError(err) })
@@ -161,6 +173,11 @@ export default function Parada() {
               <>
                 <Ban size={16} strokeWidth={1.75} aria-hidden="true" />
                 <span>La ubicación está bloqueada. Actívala en los ajustes del navegador o toca “Ya llegué” para pedir ayuda.</span>
+              </>
+            ) : esperandoPermiso ? (
+              <>
+                <MapPin size={16} strokeWidth={1.75} aria-hidden="true" />
+                <span>Toca “Ya llegué” y permite el acceso a tu ubicación.</span>
               </>
             ) : (
               <>

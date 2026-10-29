@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router'
 import { LifeBuoy, Lock, Map, MapPin } from 'lucide-react'
 import { guardar } from '../lib/almacen'
-import { pedirPosicion } from '../lib/geo'
+import { codigoError, instruccionesPermiso, pedirPosicion } from '../lib/geo'
 
 export function Ubicacion() {
   const navegar = useNavigate()
@@ -20,7 +20,7 @@ export function Ubicacion() {
       await pedirPosicion()
       seguir()
     } catch (e) {
-      if ((e as GeolocationPositionError)?.code === 1) setNegado(true)
+      if (codigoError(e) === 1) setNegado(true)
       else seguir()
     } finally {
       setPidiendo(false)
@@ -61,8 +61,7 @@ export function Ubicacion() {
 
       {negado && (
         <p className="aviso info" role="alert">
-          Bloqueaste la ubicación. Para activarla: en iPhone ve a Ajustes → Safari → Ubicación; en Android toca el candado
-          junto a la dirección de la página → Permisos → Ubicación. También puedes seguir sin ella y usar la ayuda.
+          {instruccionesPermiso()} También puedes seguir sin ella y usar la ayuda.
         </p>
       )}
 

@@ -7,18 +7,28 @@ import { MapaCampus } from '../componentes/MapaCampus'
 import { Reloj } from '../componentes/Reloj'
 import { siguienteParada, useJuego } from '../juego'
 import { leer } from '../lib/almacen'
+import { pedirPosicion } from '../lib/geo'
 import { useUbicacion } from '../lib/useUbicacion'
 import './mapa.css'
 
 export default function Mapa() {
   const { estado } = useJuego()
   const explicada = leer('ubicacionExplicada') === 'si'
-  const { posicion } = useUbicacion(explicada)
+  const { posicion, reiniciar } = useUbicacion(explicada, { esperarToque: true })
   const completadas = useMemo(() => new Set(estado?.completadas.map((c) => c.parada)), [estado])
   const siguiente = siguienteParada(estado)
 
   const [expandido, setExpandido] = useState(false)
   const [recentrar, setRecentrar] = useState(0)
+
+  // Sin posición todavía, el toque pide el permiso (en iPhone solo aparece así) y luego centra.
+  function centrar() {
+    if (posicion) return setRecentrar((n) => n + 1)
+    pedirPosicion()
+      .then(() => reiniciar())
+      .catch(() => {})
+      .finally(() => setRecentrar((n) => n + 1))
+  }
   const [altoArrastre, setAltoArrastre] = useState<number | null>(null)
   const [altoExpandido, setAltoExpandido] = useState(230)
   const [relleno, setRelleno] = useState({ arriba: 96, abajo: 176 })
@@ -142,7 +152,7 @@ export default function Mapa() {
         type="button"
         className="btn-ubicacion"
         aria-label="Centrar en mi ubicación"
-        onClick={() => setRecentrar((n) => n + 1)}
+        onClick={centrar}
       >
         <LocateFixed size={20} strokeWidth={1.75} aria-hidden="true" />
       </button>
