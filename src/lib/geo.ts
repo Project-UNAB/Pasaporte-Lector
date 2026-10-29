@@ -35,10 +35,15 @@ function obtener(opciones: PositionOptions): Promise<Posicion> {
  * Si el GPS preciso no responde a tiempo (común en iPhone bajo techo), se reintenta con la ubicación normal.
  */
 export async function pedirPosicion(): Promise<Posicion> {
+  const inicio = Date.now()
   try {
     return await obtener({ enableHighAccuracy: true, timeout: 10000, maximumAge: 5000 })
   } catch (err) {
-    if (codigoError(err) === 1) throw err
+    if (codigoError(err) === 1) {
+      // Sin tiempo para mostrar el aviso: lo bloquea un ajuste del celular, no la persona.
+      rechazoInstantaneo = Date.now() - inicio < 1000
+      throw err
+    }
     return obtener({ enableHighAccuracy: false, timeout: 15000, maximumAge: 60000 })
   }
 }
@@ -53,10 +58,15 @@ const esIOS = () => /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.p
 /** Sin https el navegador bloquea la ubicación sin mostrar ningún aviso. */
 export const MENSAJE_SIN_HTTPS = 'La ubicación solo funciona si la dirección de la página empieza por https://. Ábrela así e intenta de nuevo.'
 
-/** Qué hacer cuando la ubicación está bloqueada, según el celular. */
+let rechazoInstantaneo = false
+
+/** Qué hacer cuando la ubicación está bloqueada, según el celular y si el rechazo llegó sin mostrar el aviso. */
 export function instruccionesPermiso(): string {
+  if (esIOS() && rechazoInstantaneo) {
+    return 'Tu iPhone tiene bloqueada la ubicación para Safari, por eso no aparece el aviso. Ve a Ajustes → Privacidad y seguridad → Localización: actívala y, más abajo en «Sitios web de Safari», elige «Al usar la app» con «Ubicación exacta». Si usas Tiempo en pantalla, revisa que Localización permita cambios. Luego cierra esta pestaña y abre la página de nuevo.'
+  }
   return esIOS()
-    ? 'La ubicación está bloqueada para esta página. En Safari toca «aA» junto a la dirección → Configuración del sitio web → Ubicación → Permitir. Revisa también Ajustes → Privacidad y seguridad → Localización → Sitios web de Safari → «Al usar la app», con «Ubicación exacta» activada.'
+    ?'La ubicación está bloqueada para esta página. En Safari toca «aA» junto a la dirección → Configuración del sitio web → Ubicación → Permitir. Revisa también Ajustes → Privacidad y seguridad → Localización → Sitios web de Safari → «Al usar la app», con «Ubicación exacta» activada.'
     : 'La ubicación está bloqueada para esta página. Toca el ícono a la izquierda de la dirección → Permisos → Ubicación → Permitir, y revisa que la ubicación del celular esté encendida.'
 }
 
