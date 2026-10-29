@@ -1,40 +1,108 @@
 .mapa-campus {
   width: 100%;
   border-radius: var(--radio);
+  border: 1px solid var(--linea);
   overflow: hidden;
-  background: #e9eeec;
-  box-shadow: var(--sombra);
+  background: #ecefee;
   isolation: isolate;
+}
+
+.mapa-campus.completo {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  border: 0;
+  border-radius: 0;
+  z-index: 1;
+}
+
+.mapa-campus.completo .leaflet-bottom.leaflet-right {
+  bottom: calc(var(--alto-abajo, 176px) + 6px);
+  left: 12px;
+  right: auto;
+  transition: bottom 0.24s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.mapa-campus.completo .leaflet-control-attribution {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(4px);
+  border-radius: 6px;
+  padding: 2px 6px;
+  color: var(--sub);
+  box-shadow: 0 1px 2px rgba(17, 25, 23, 0.08);
+}
+
+@media (min-width: 768px) {
+  .mapa-campus.completo .leaflet-bottom.leaflet-right {
+    bottom: 12px;
+    left: auto;
+    right: 12px;
+  }
 }
 
 .mapa-gris {
   filter: grayscale(1) brightness(1.05) contrast(0.9);
 }
 
+/* ─── Marcadores minimalistas de paradas ─── */
+
 .pin-parada {
   display: grid !important;
   place-items: center;
   border-radius: 50%;
-  border: 3px solid #fff;
-  font: 700 13px var(--fuente-titulo);
-  color: #fff;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+  font-family: var(--fuente);
+  font-variant-numeric: tabular-nums;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.pin-parada.hecha {
-  background: #0f6b57;
+.pin-parada > span {
+  display: inline-grid;
+  place-items: center;
+  line-height: 1;
 }
 
 .pin-parada.actual {
-  background: #eab83c;
-  color: #3a2a00;
+  background: var(--g7);
+  color: #ffffff;
+  border: 2.5px solid #ffffff;
+  font-size: 13px;
+  font-weight: 700;
+  box-shadow:
+    0 0 0 5px rgba(15, 82, 67, 0.18),
+    0 3px 10px rgba(10, 46, 38, 0.28);
+  animation: pulsoPinActual 2.4s ease-in-out infinite alternate;
+}
+
+@keyframes pulsoPinActual {
+  from {
+    box-shadow:
+      0 0 0 4px rgba(15, 82, 67, 0.14),
+      0 3px 8px rgba(10, 46, 38, 0.24);
+  }
+  to {
+    box-shadow:
+      0 0 0 8px rgba(15, 82, 67, 0.26),
+      0 4px 12px rgba(10, 46, 38, 0.3);
+  }
+}
+
+.pin-parada.hecha {
+  background: #e6f4ee;
+  color: var(--g7);
+  border: 1.5px solid var(--g5);
+  box-shadow: 0 1px 4px rgba(15, 82, 67, 0.14);
 }
 
 .pin-parada.bloqueada {
-  background: #9aa8a3;
-  font-size: 11px;
+  background: rgba(255, 255, 255, 0.94);
+  color: #6c7a75;
+  border: 1.25px solid #c2ceca;
+  box-shadow: 0 1px 3px rgba(17, 25, 23, 0.1);
 }
 
 .leaflet-control-attribution {
   font-size: 9px;
+  opacity: 0.85;
 }
