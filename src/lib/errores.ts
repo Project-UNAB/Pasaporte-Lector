@@ -2,7 +2,7 @@ const MENSAJES: Record<string, string> = {
   consentimiento_requerido: 'Debes aceptar la autorización de datos para continuar.',
   juego_no_activo: 'Tu tiempo de juego terminó.',
   datos_bloqueados: 'Ya empezaste el recorrido; tus datos no se pueden cambiar.',
-  id_invalido: 'Revisa tu ID estudiantil.',
+  id_invalido: 'Tu ID estudiantil debe empezar por U00 y tener 9 caracteres (ej.: U00182088).',
   id_duplicado: 'Ese ID estudiantil ya está registrado con otro correo.',
   nombre_invalido: 'Escribe tu nombre completo.',
   carrera_invalida: 'Elige tu carrera.',

@@ -141,7 +141,7 @@ function crearPerfil(datos: Partial<PerfilFalso>): PerfilFalso {
 export function perfilListo(datos: Partial<PerfilFalso> = {}): Partial<PerfilFalso> {
   return {
     nombre: 'Ana María Pérez',
-    id_estudiantil: '182088',
+    id_estudiantil: 'U00182088',
     carrera: 'Ingeniería de Sistemas',
     foto_path: `${USUARIO}/foto.jpg`,
     ...datos,
@@ -209,7 +209,7 @@ export async function montarSupabaseFalso(page: Page, semilla: Semilla = {}): Pr
     const id = String(cuerpo.p_id_estudiantil ?? '').replace(/\s/g, '').toUpperCase()
     const nombre = String(cuerpo.p_nombre ?? '').replace(/\s+/g, ' ').trim()
     const carrera = String(cuerpo.p_carrera ?? '').trim()
-    if (!/^[A-Z0-9]{4,15}$/.test(id)) return { error: 'id_invalido' }
+    if (!/^U00[0-9]{6}$/.test(id)) return { error: 'id_invalido' }
     if (nombre.length < 3 || nombre.length > 80) return { error: 'nombre_invalido' }
     if (carrera.length < 2 || carrera.length > 80) return { error: 'carrera_invalida' }
     perfil.id_estudiantil = id

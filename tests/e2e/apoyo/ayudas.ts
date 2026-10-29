@@ -78,7 +78,7 @@ export async function iniciarSesion(page: Page, opciones: { alVerCodigo?: () => 
 }
 
 /** Llena el formulario de datos y continúa (paso 2 del registro). */
-export async function llenarDatos(page: Page, datos = { id: '182088', nombre: 'Ana María Pérez', carrera: 'Ingeniería de Sistemas' }) {
+export async function llenarDatos(page: Page, datos = { id: 'U00182088', nombre: 'Ana María Pérez', carrera: 'Ingeniería de Sistemas' }) {
   await expect(page).toHaveURL(/\/datos$/)
   await page.locator('#id').fill(datos.id)
   await page.locator('#nombre').fill(datos.nombre)

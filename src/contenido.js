@@ -10,9 +10,9 @@
 
 export const config = {
   dominioCorreo: 'unab.edu.co',
-  // Formato del ID estudiantil. Por defecto: 182088 o U00182088.
-  formatoId: /^(U\d{8}|\d{5,10})$/i,
-  ejemploId: '182088 o U00182088',
+  // Formato del ID estudiantil: obligatoriamente U00 + 6 dígitos (U00182088). El servidor valida lo mismo.
+  formatoId: /^U00\d{6}$/i,
+  ejemploId: 'U00182088',
   horasLimite: 24,
   // Radio en metros si una parada no define el suyo.
   radioPorDefecto: 40,

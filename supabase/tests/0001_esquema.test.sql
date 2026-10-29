@@ -6,7 +6,7 @@ begin;
 create extension if not exists pgtap with schema extensions;
 set local search_path = public, extensions;
 
-select plan(40);
+select plan(42);
 
 -- Semilla de ejemplo (claves.example.json) dentro de la transacción de prueba.
 delete from public.claves_paradas;
@@ -112,6 +112,20 @@ select throws_ok(
   'P0001',
   'id_duplicado',
   'Rechaza un ID estudiantil ya registrado con otro correo'
+);
+
+select throws_ok(
+  $$ select public.guardar_datos('182088', 'Beto Gómez', 'Derecho') $$,
+  'P0001',
+  'id_invalido',
+  'Rechaza un ID estudiantil sin el prefijo U00'
+);
+
+select throws_ok(
+  $$ select public.guardar_datos('U01999999', 'Beto Gómez', 'Derecho') $$,
+  'P0001',
+  'id_invalido',
+  'Rechaza un ID estudiantil que no empieza por U00'
 );
 
 select lives_ok(
