@@ -7,6 +7,20 @@ import './estilos/base.css'
 import { App } from './App'
 import { ProveedorJuego } from './juego'
 
+// Al reiniciar la base de datos se cambia esta versión: cada celular borra una sola vez su caché, su sesión y lo
+// guardado de la partida, y empieza limpio desde la portada.
+const VERSION_DATOS = '2026-10-29b'
+try {
+  if (localStorage.getItem('pl:version-datos') !== VERSION_DATOS) {
+    localStorage.clear()
+    sessionStorage.clear()
+    localStorage.setItem('pl:version-datos', VERSION_DATOS)
+    if ('caches' in window) caches.keys().then((claves) => claves.forEach((c) => caches.delete(c))).catch(() => {})
+  }
+} catch {
+  // Navegación privada o almacenamiento bloqueado: no hay nada que limpiar.
+}
+
 // Busca versiones nuevas al abrir, al volver a la pestaña y cada minuto; al encontrar una, la página se recarga sola.
 registerSW({
   immediate: true,
