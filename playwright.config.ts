@@ -26,6 +26,8 @@ export default defineConfig({
   reporter: [['list']],
   use: {
     baseURL: `http://localhost:${PUERTO}`,
+    // Sin animaciones decorativas: en WebKit sin GPU vuelven lentísimo cada paso y no aportan a la prueba.
+    reducedMotion: 'reduce',
     // El service worker de la PWA guarda respuestas en caché y se sale de la
     // intercepción de peticiones: en las pruebas queda desactivado.
     serviceWorkers: 'block',
