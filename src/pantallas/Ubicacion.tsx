@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router'
 import { LifeBuoy, Lock, Map, MapPin } from 'lucide-react'
+import { Volver } from '../componentes/Volver'
 import { guardar } from '../lib/almacen'
 import { codigoError, instruccionesPermiso, pedirPosicion } from '../lib/geo'
 
@@ -29,6 +30,7 @@ export function Ubicacion() {
 
   return (
     <main className="pantalla ubicacion">
+      <Volver a="/foto" etiqueta="Volver a la foto" />
       <div className="encabezado-centrado" style={{ marginTop: 12, marginBottom: 12 }}>
         <div className="icono-circulo radar" aria-hidden="true" style={{ marginBottom: 16 }}>
           <MapPin size={26} strokeWidth={1.75} aria-hidden="true" />

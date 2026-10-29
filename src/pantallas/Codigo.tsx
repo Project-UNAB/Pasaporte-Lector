@@ -2,6 +2,7 @@ import { useEffect, useState, type FormEvent } from 'react'
 import { Navigate, useNavigate } from 'react-router'
 import { config } from '../contenido.js'
 import { Pasos } from '../componentes/Pasos'
+import { Volver } from '../componentes/Volver'
 import { guardar, leer } from '../lib/almacen'
 import { mensajeError } from '../lib/errores'
 import { opcionesCodigo, supabase } from '../lib/supabase'
@@ -64,6 +65,7 @@ export function Codigo() {
 
   return (
     <main className="pantalla acceso-pantalla">
+      <Volver a={crear ? '/ingresar' : '/ingresar?modo=entrar'} etiqueta="Volver a escribir el correo" />
       {crear ? <Pasos actual={1} /> : <div style={{ height: 8 }} />}
 
       <form onSubmit={verificar} className="acceso-form aparece">

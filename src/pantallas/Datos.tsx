@@ -1,6 +1,8 @@
 import { useState, type FormEvent } from 'react'
+import { useNavigate } from 'react-router'
 import { carreras, config } from '../contenido.js'
 import { Pasos } from '../componentes/Pasos'
+import { Volver } from '../componentes/Volver'
 import { Reloj } from '../componentes/Reloj'
 import { useJuego, type EstadoServidor } from '../juego'
 import { mensajeError } from '../lib/errores'
@@ -10,7 +12,8 @@ import { supabase } from '../lib/supabase'
 const OTRA = '__otra__'
 
 export function Datos() {
-  const { estado, aplicar } = useJuego()
+  const { estado, aplicar, salir } = useJuego()
+  const navegar = useNavigate()
   const p = estado?.perfil
   const [id, setId] = useState(p?.id_estudiantil ?? '')
   const [nombre, setNombre] = useState(p?.nombre ?? '')
@@ -36,6 +39,8 @@ export function Datos() {
       })
       if (error) throw error
       aplicar(data as EstadoServidor)
+      // También se llega desde la foto para corregir datos: siempre se sigue a la foto.
+      navegar('/foto', { replace: true })
     } catch (err) {
       setError(mensajeError(err))
       setEnviando(false)
@@ -44,6 +49,7 @@ export function Datos() {
 
   return (
     <main className="pantalla acceso-pantalla">
+      <Volver alTocar={salir} etiqueta="Salir y volver al inicio" />
       <Pasos actual={2} />
 
       <form onSubmit={enviar} className="acceso-form aparece">

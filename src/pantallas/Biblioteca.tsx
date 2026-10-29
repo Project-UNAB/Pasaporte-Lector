@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from 'react'
 import { Landmark } from 'lucide-react'
 import { textos } from '../contenido.js'
+import { Volver } from '../componentes/Volver'
 import { useJuego } from '../juego'
 import { mensajeError } from '../lib/errores'
 import { supabase } from '../lib/supabase'
@@ -43,6 +44,7 @@ export function Biblioteca() {
 
   return (
     <main className="pantalla biblioteca">
+      <Volver a="/mapa" etiqueta="Volver al mapa" />
       <div className="encabezado-centrado" style={{ marginTop: 20 }}>
         <div className="icono-circulo levita" aria-hidden="true" style={{ marginBottom: 16 }}>
           <Landmark size={26} strokeWidth={1.75} aria-hidden="true" />

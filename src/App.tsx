@@ -62,10 +62,10 @@ export function App() {
         <Route path="/ingresar" element={<Solo etapas={['anonimo', 'consentimiento']}><Ingresar /></Solo>} />
         {/* Tras verificar el código, la pantalla sigue visible mientras se inicia la partida. */}
         <Route path="/codigo" element={<Solo etapas={['anonimo', 'cargando']}><Codigo /></Solo>} />
-        <Route path="/datos" element={<Solo etapas={['datos']}><Datos /></Solo>} />
-        <Route path="/foto" element={<Solo etapas={['foto']}><Foto /></Solo>} />
+        <Route path="/datos" element={<Solo etapas={['datos', 'foto']}><Datos /></Solo>} />
+        <Route path="/foto" element={<Solo etapas={['foto', 'juego']}><Foto /></Solo>} />
         <Route path="/ubicacion" element={<Solo etapas={['juego']}><Ubicacion /></Solo>} />
-        <Route path="/mapa" element={<Solo etapas={['juego']}><Mapa /></Solo>} />
+        <Route path="/mapa" element={<Solo etapas={['juego', 'biblioteca']}><Mapa /></Solo>} />
         <Route path="/parada/:id" element={<Solo etapas={['juego', 'biblioteca']}><Parada /></Solo>} />
         <Route path="/tarjeta/:id" element={<Solo etapas={['juego', 'biblioteca', 'pasaporte']}><Tarjeta /></Solo>} />
         <Route path="/biblioteca" element={<Solo etapas={['biblioteca']}><Biblioteca /></Solo>} />

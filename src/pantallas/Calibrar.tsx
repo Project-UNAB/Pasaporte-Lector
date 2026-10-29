@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { paradas } from '../contenido.js'
+import { Volver } from '../componentes/Volver'
 import { guardar, leer } from '../lib/almacen'
 import { useUbicacion } from '../lib/useUbicacion'
 
@@ -47,6 +48,7 @@ export default function Calibrar() {
 
   return (
     <main className="pantalla">
+      <Volver a="/" etiqueta="Volver al inicio" />
       <h1 className="titulo">Calibrar paradas</h1>
       <p className="mut">Párate junto al póster, espera unos 10 segundos a que la precisión baje y anota la coordenada. Mejor al aire libre o junto a una ventana.</p>
 

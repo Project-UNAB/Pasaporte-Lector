@@ -12,7 +12,7 @@ import { useUbicacion } from '../lib/useUbicacion'
 import './mapa.css'
 
 export default function Mapa() {
-  const { estado } = useJuego()
+  const { estado, etapa } = useJuego()
   const explicada = leer('ubicacionExplicada') === 'si'
   const { posicion, reiniciar } = useUbicacion(explicada, { esperarToque: true })
   const completadas = useMemo(() => new Set(estado?.completadas.map((c) => c.parada)), [estado])
@@ -223,6 +223,13 @@ export default function Mapa() {
           </div>
         </div>
 
+        {!siguiente && etapa === 'biblioteca' && (
+          <div className="panel-pie">
+            <Link className="btn" to="/biblioteca" replace>
+              Volver a la biblioteca
+            </Link>
+          </div>
+        )}
         {siguiente && (
           <div className="panel-pie">
             <p className="mut mapa-siguiente">

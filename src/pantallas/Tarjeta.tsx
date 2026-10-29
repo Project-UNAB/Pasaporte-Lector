@@ -3,6 +3,7 @@ import { Navigate, useNavigate, useParams } from 'react-router'
 import { Check } from 'lucide-react'
 import { bloques, paradas } from '../contenido.js'
 import { IconoBloque } from '../componentes/Iconos'
+import { Volver } from '../componentes/Volver'
 import { paradaCompletada, useJuego } from '../juego'
 import './tarjeta.css'
 
@@ -27,6 +28,7 @@ export function Tarjeta() {
   if (verFinal) {
     return (
       <main className="pantalla oscura tarjeta-cultural tarjeta-cierre">
+        <Volver alTocar={() => setVerFinal(false)} etiqueta="Volver a la tarjeta del autor" />
         <header className="tarjeta-encabezado">
           <span className="chip">Bloque {parada.bloqueIndice + 1} completado</span>
         </header>
@@ -68,6 +70,10 @@ export function Tarjeta() {
 
   return (
     <main className="pantalla tarjeta-cultural clara">
+      <Volver
+        alTocar={seguir}
+        etiqueta={etapa === 'pasaporte' ? 'Regresar al pasaporte' : etapa === 'biblioteca' ? 'Regresar a la biblioteca' : 'Regresar al mapa'}
+      />
       <header className="tarjeta-encabezado">
         {!releyendo && (
           <div className="festejo" aria-hidden="true">

@@ -1019,3 +1019,38 @@ select.entrada {
   clip: rect(0 0 0 0);
   white-space: nowrap;
 }
+
+/* Botón «Volver» arriba de cada pantalla */
+.volver-fila {
+  display: flex;
+  align-self: flex-start;
+  margin: -6px 0 var(--sp-3);
+  position: relative;
+  z-index: 2;
+}
+
+.boton-volver {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  padding: 0 16px 0 12px;
+  border-radius: 999px;
+  background: var(--card);
+  border: 1px solid var(--linea);
+  color: var(--ink);
+  font: 500 14px var(--fuente);
+  text-decoration: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.boton-volver:active {
+  background: var(--g1);
+  border-color: var(--g7);
+}
+
+.boton-volver:focus-visible {
+  outline: 2px solid var(--g7);
+  outline-offset: 2px;
+}

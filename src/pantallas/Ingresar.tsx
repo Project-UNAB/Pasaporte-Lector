@@ -2,6 +2,7 @@ import { useState, type FormEvent } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router'
 import { config, textos } from '../contenido.js'
 import { Pasos } from '../componentes/Pasos'
+import { Volver } from '../componentes/Volver'
 import { useJuego, type EstadoServidor } from '../juego'
 import { guardar, leer } from '../lib/almacen'
 import { mensajeError } from '../lib/errores'
@@ -61,6 +62,7 @@ export function Ingresar() {
 
   return (
     <main className="pantalla acceso-pantalla">
+      {yaVerificado ? <Volver alTocar={salir} etiqueta="Volver al inicio" /> : <Volver a="/" etiqueta="Volver al inicio" />}
       {crear || yaVerificado ? <Pasos actual={1} /> : <div style={{ height: 8 }} />}
 
       <form onSubmit={enviar} className="acceso-form aparece">

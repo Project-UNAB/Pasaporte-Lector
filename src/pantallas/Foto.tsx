@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import { Focus, ScanFace, Sun, User } from 'lucide-react'
+import { Navigate, useNavigate } from 'react-router'
 import { Pasos } from '../componentes/Pasos'
+import { Volver } from '../componentes/Volver'
 import { useJuego, type EstadoServidor } from '../juego'
 import { mensajeError } from '../lib/errores'
 import { capturarFoto } from '../lib/foto'
@@ -10,7 +12,8 @@ import './foto.css'
 type Fase = 'consejos' | 'camara' | 'revisar' | 'subiendo'
 
 export function Foto() {
-  const { sesion, aplicar } = useJuego()
+  const { sesion, estado, aplicar } = useJuego()
+  const navegar = useNavigate()
   const video = useRef<HTMLVideoElement>(null)
   const flujo = useRef<MediaStream | null>(null)
   const [fase, setFase] = useState<Fase>('consejos')
@@ -104,14 +107,20 @@ export function Foto() {
       const { data, error: err2 } = await supabase.rpc('guardar_foto')
       if (err2) throw err2
       aplicar(data as EstadoServidor)
+      // También se llega desde la ubicación para repetir la foto: el mapa decide si falta explicar la ubicación.
+      navegar('/mapa', { replace: true })
     } catch (err) {
       setError(mensajeError(err))
       setFase('revisar')
     }
   }
 
+  // Después de la primera parada la foto ya no se puede cambiar.
+  if (estado?.completadas.length) return <Navigate to="/mapa" replace />
+
   return (
     <main className="pantalla foto">
+      <Volver a="/datos" etiqueta="Volver a tus datos" />
       <Pasos actual={3} />
       <div className="encabezado-centrado aparece">
         <h1 className="titulo">Tu foto de viajero</h1>
