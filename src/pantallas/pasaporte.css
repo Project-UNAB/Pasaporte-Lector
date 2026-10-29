@@ -1,4 +1,4 @@
-/* El pasaporte es solo para ver: sin selección, sin menú de guardar imagen. */
+/* Sin selección ni menú de imagen: para guardarlo está el botón «Descargar como foto». */
 .pasaporte {
   -webkit-user-select: none;
   user-select: none;

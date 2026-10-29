@@ -67,7 +67,7 @@ Pegar `scripts/salida/claves.sql` en el SQL Editor y ejecutarlo. Se puede repeti
 ```bash
 npm install
 cp .env.example .env.local           # URL y llave pública (anon/publishable) del proyecto
-npm run dev                          # abre en la red local para probar desde el celular
+npm run dev                          # https://<IP-del-PC>:5173 en el celular (aceptar el aviso del certificado de prueba)
 ```
 
 > Cámara y ubicación requieren HTTPS. Para probar desde el celular en local usa un túnel (`npx cloudflared tunnel --url http://localhost:5173`) o despliega una vista previa en Vercel.
@@ -92,7 +92,7 @@ Abrir `https://<dominio>/calibrar` en el celular, pararse junto a cada póster, 
 - Palabra clave comparada sin mayúsculas, tildes ni espacios sobrantes, contra un hash; máximo 5 errores por minuto.
 - El teclado se activa solo cerca del póster (radio configurable, 40 m por defecto). Tras 3 intentos de ubicación fallidos aparece una ayuda discreta; todo queda registrado.
 - Foto solo desde la cámara en vivo, comprimida a ~100 KB, en un bucket privado donde cada persona ve únicamente la suya. No se puede cambiar después de la primera parada.
-- Pasaporte con foto, datos, sellos con fecha y 1 de 20 marcas de agua asignada al azar una sola vez. Solo se ve, no se descarga.
+- Pasaporte con foto, datos, sellos con fecha y 1 de 20 marcas de agua asignada al azar una sola vez. Se descarga como foto PNG (en iPhone, desde el menú de compartir).
 - La biblioteca activa el pasaporte con un código (hash en el servidor, 5 intentos cada 10 min). Se puede activar si las 9 paradas se completaron dentro de las 24 h.
 - Progreso guardado en cada parada: al volver a entrar con el mismo correo se continúa donde iba.
 

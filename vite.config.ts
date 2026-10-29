@@ -2,12 +2,15 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
+import basicSsl from '@vitejs/plugin-basic-ssl'
 
-export default defineConfig({
+export default defineConfig(({ command, isPreview }) => ({
   // Las pruebas de punta a punta (tests/e2e) las corre Playwright, no Vitest.
   test: { include: ['src/**/*.test.ts', 'scripts/**/*.test.mjs'] },
   plugins: [
     react(),
+    // En el celular (http://192.168…) el navegador bloquea cámara y GPS sin HTTPS: en desarrollo se sirve con un certificado propio.
+    command === 'serve' && !isPreview && basicSsl(),
     VitePWA({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.ico', 'apple-touch-icon-180x180.png', 'icono.svg'],
@@ -61,4 +64,4 @@ export default defineConfig({
       },
     },
   },
-})
+}))

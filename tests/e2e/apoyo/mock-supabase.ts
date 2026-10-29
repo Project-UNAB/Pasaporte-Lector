@@ -428,7 +428,8 @@ export async function montarSupabaseFalso(page: Page, semilla: Semilla = {}): Pr
         return respuesta(ruta, { Key: `fotos/${rutaFoto}` })
       }
 
-      if (metodo === 'GET' && camino.startsWith('/storage/v1/object/sign/fotos/')) {
+      // La descarga directa (para crear la imagen del pasaporte) usa la ruta autenticada.
+      if (metodo === 'GET' && /^\/storage\/v1\/object\/(sign|authenticated)\/fotos\//.test(camino)) {
         return ruta.fulfill({ status: 200, headers: { ...cors(ruta), 'content-type': 'image/jpeg' }, body: FOTO_JPEG })
       }
 

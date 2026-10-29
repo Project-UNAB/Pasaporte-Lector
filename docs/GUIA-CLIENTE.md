@@ -107,5 +107,7 @@ En **Supabase → SQL Editor**, abre `supabase/consultas/exportar.sql`, ejecuta 
 - 24 horas desde que verifica el correo. Si no completa las 9 paradas en ese tiempo, queda bloqueada sin reintento.
 - Paradas en orden fijo: edificio D → edificio L → biblioteca.
 - La foto solo se toma con la cámara en ese momento y no se puede cambiar después de la primera parada.
-- El pasaporte solo se ve en la web: no se descarga.
+- La biblioteca puede activar el pasaporte aunque ya pasaron las 24 horas, siempre que la persona haya completado las 9 paradas a tiempo.
+- Los sellos se ganan por bloque: 3 sellos, uno por cada bloque de paradas.
+- El pasaporte se puede descargar como foto con el botón «Descargar como foto». En iPhone se abre el menú de compartir: ahí se elige «Guardar imagen» y queda en Fotos.
 - La web no limita la cantidad de registros ni habla de premios. Eso se maneja con Bienestar.

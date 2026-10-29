@@ -6,7 +6,7 @@ import { supabase } from '../lib/supabase'
 import { fechaSello } from '../lib/tiempo'
 import './pasaporte.css'
 
-const COLORES = ['var(--g7)', 'var(--blue)', 'var(--red)']
+const COLORES = ['#0f6b57', '#2c6fb3', '#d9503f']
 
 function mrz(nombre: string, id: string, fecha: string) {
   const limpiar = (s: string) =>
@@ -32,6 +32,8 @@ export default function Pasaporte() {
   const { estado } = useJuego()
   const p = estado!.perfil!
   const [foto, setFoto] = useState<string | null>(null)
+  const [descargando, setDescargando] = useState(false)
+  const [errorDescarga, setErrorDescarga] = useState('')
 
   useEffect(() => {
     if (!p.foto_path) return
@@ -48,6 +50,32 @@ export default function Pasaporte() {
       ? paradas.map((pa) => ({ id: pa.id, icono: bloques[pa.bloqueIndice].icono, nombre: pa.lugar !== 'Por definir' ? pa.lugar : `Parada ${pa.posicion}`, fecha: fechaDe(pa.id) }))
       : bloques.map((b) => ({ id: b.id, icono: b.icono, nombre: b.zona, fecha: fechaDe(b.paradas[b.paradas.length - 1].id) }))
   const [l1, l2] = mrz(p.nombre ?? '', p.id_estudiantil ?? '', p.activado_en ?? p.inicio)
+
+  async function descargar() {
+    setErrorDescarga('')
+    setDescargando(true)
+    try {
+      const [{ crearImagenPasaporte, guardarImagen }, retrato] = await Promise.all([
+        import('../lib/imagenPasaporte'),
+        p.foto_path ? supabase.storage.from('fotos').download(p.foto_path).then(({ data }) => data) : null,
+      ])
+      const blob = await crearImagenPasaporte({
+        encabezado: textos.pasaporteEncabezado,
+        nombre: p.nombre ?? '',
+        carrera: p.carrera ?? '',
+        id: p.id_estudiantil ?? '',
+        mrz: [l1, l2],
+        foto: retrato,
+        marca,
+        sellos: sellos.map((s, i) => ({ icono: s.icono, nombre: s.nombre, fecha: s.fecha ? fechaSello(s.fecha) : '', color: COLORES[i % 3] })),
+      })
+      await guardarImagen(blob, 'pasaporte-lector.png')
+    } catch {
+      setErrorDescarga('No pudimos crear la imagen. Revisa tu conexión e intenta de nuevo.')
+    } finally {
+      setDescargando(false)
+    }
+  }
 
   // Una marca con `color` (la UNAB) usa su SVG como molde y se pinta con ese color.
   const marcaDeAgua = (clase: string) =>
@@ -109,6 +137,15 @@ export default function Pasaporte() {
       <p className="mut" style={{ textAlign: 'center', marginTop: 14 }}>
         Marca de agua: {marca.nombre}
       </p>
+
+      <button className="btn dorado" style={{ marginTop: 14 }} onClick={descargar} disabled={descargando}>
+        {descargando ? 'Creando imagen…' : '📥 Descargar como foto'}
+      </button>
+      {errorDescarga && (
+        <p className="aviso error" role="alert">
+          {errorDescarga}
+        </p>
+      )}
 
       <section className="lecturas" aria-label="Tus lecturas">
         <h2>Tus lecturas</h2>

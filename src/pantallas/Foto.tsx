@@ -45,6 +45,10 @@ export function Foto() {
 
   async function abrirCamara() {
     setError('')
+    if (!window.isSecureContext) {
+      setError('La cámara solo funciona si la página abre con https://. Revisa la dirección e intenta de nuevo.')
+      return
+    }
     if (!navigator.mediaDevices?.getUserMedia) {
       setError('Tu navegador no permite usar la cámara. Abre la página en Chrome (Android) o Safari (iPhone).')
       return
@@ -60,7 +64,9 @@ export function Foto() {
       const nombre = err instanceof DOMException ? err.name : ''
       setError(
         nombre === 'NotAllowedError'
-          ? 'No diste permiso para usar la cámara. Actívalo en los ajustes del navegador para este sitio y vuelve a intentar.'
+          ? /iPhone|iPad/.test(navigator.userAgent)
+            ? 'La cámara está bloqueada para esta página. Toca «aA» en la barra de direcciones → Configuración del sitio web → Cámara → Permitir, y vuelve a intentar.'
+            : 'La cámara está bloqueada para esta página. Toca el ícono a la izquierda de la dirección → Permisos → Cámara → Permitir, y vuelve a intentar.'
           : nombre === 'NotFoundError'
             ? 'No encontramos una cámara en este dispositivo.'
             : 'No pudimos abrir la cámara. Cierra otras apps que la estén usando e intenta de nuevo.',

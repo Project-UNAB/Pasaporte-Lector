@@ -53,6 +53,13 @@ test('a) recorrido completo hasta el pasaporte', async ({ page }, info) => {
   expect(falso.completadas()).toEqual(paradas.map((p) => p.id))
   expect(falso.intentos('palabra_correcta')).toHaveLength(9)
   expect(falso.perfil()?.activado_en).toBeTruthy()
+
+  // El pasaporte se descarga como imagen PNG. En iPhone abre el menú de compartir, que aquí no se puede probar.
+  if (conCamara) {
+    const descarga = page.waitForEvent('download')
+    await page.getByRole('button', { name: /Descargar como foto/ }).click()
+    expect((await descarga).suggestedFilename()).toBe('pasaporte-lector.png')
+  }
 })
 
 /**
