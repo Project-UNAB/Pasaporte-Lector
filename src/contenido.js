@@ -87,6 +87,7 @@ export const bloques = [
         tarjeta: {
           titulo: 'El poeta de las fábulas',
           autor: 'Rafael Pombo',
+          retrato: '/tarjetas/01.svg',
           texto:
             'Rafael Pombo (Bogotá, 1833-1912) es uno de los grandes poetas de Colombia. Sus fábulas en verso, ' +
             'como «El renacuajo paseador» y «Simón el bobito», las han recitado generaciones de niños colombianos.',
@@ -102,6 +103,7 @@ export const bloques = [
         tarjeta: {
           titulo: 'Un Nobel que escribió al amor',
           autor: 'Pablo Neruda',
+          retrato: '/tarjetas/02.svg',
           texto:
             'El chileno Pablo Neruda (1904-1973) ganó el Premio Nobel de Literatura en 1971. Su libro «Veinte ' +
             'poemas de amor y una canción desesperada» es uno de los poemarios más leídos en lengua española.',
@@ -117,6 +119,7 @@ export const bloques = [
         tarjeta: {
           titulo: 'El Nocturno de Colombia',
           autor: 'José Asunción Silva',
+          retrato: '/tarjetas/03.svg',
           texto:
             'José Asunción Silva (Bogotá, 1865-1896) fue una figura clave del modernismo. Su «Nocturno III» es ' +
             'uno de los poemas más conocidos de la literatura colombiana.',
@@ -147,6 +150,7 @@ export const bloques = [
         tarjeta: {
           titulo: 'El dramaturgo más representado',
           autor: 'William Shakespeare',
+          retrato: '/tarjetas/04.svg',
           texto:
             'William Shakespeare (1564-1616) escribió obras como «Romeo y Julieta» y «Hamlet». Es considerado uno ' +
             'de los dramaturgos más importantes de la historia y sus obras se siguen representando en todo el mundo.',
@@ -162,6 +166,7 @@ export const bloques = [
         tarjeta: {
           titulo: 'Teatro con raíz popular',
           autor: 'Federico García Lorca',
+          retrato: '/tarjetas/05.svg',
           texto:
             'El español Federico García Lorca (1898-1936) escribió «Bodas de sangre» y «La casa de Bernarda Alba». ' +
             'Sus obras mezclan poesía, tradición popular y tragedia, y se estudian y se montan hasta hoy.',
@@ -177,6 +182,7 @@ export const bloques = [
         tarjeta: {
           titulo: 'El teatro colombiano que cambió el rumbo',
           autor: 'Enrique Buenaventura',
+          retrato: '/tarjetas/06.svg',
           texto:
             'Enrique Buenaventura (Cali, 1925-2003) dirigió el Teatro Experimental de Cali y fue uno de los grandes ' +
             'renovadores del teatro latinoamericano. Impulsó la «creación colectiva», donde las obras se construyen ' +
@@ -207,6 +213,7 @@ export const bloques = [
         tarjeta: {
           titulo: 'El inventor de la novela moderna',
           autor: 'Miguel de Cervantes',
+          retrato: '/tarjetas/07.svg',
           texto:
             'Miguel de Cervantes (1547-1616) publicó «Don Quijote de la Mancha» en dos partes (1605 y 1615). ' +
             'Muchos lo consideran la primera novela moderna.',
@@ -222,6 +229,7 @@ export const bloques = [
         tarjeta: {
           titulo: 'Una novela del Valle del Cauca',
           autor: 'Jorge Isaacs',
+          retrato: '/tarjetas/08.svg',
           texto:
             'Jorge Isaacs (Cali, 1837-1895) publicó «María» en 1867. Es una de las novelas románticas más ' +
             'importantes de Colombia y de toda Hispanoamérica.',
@@ -237,6 +245,7 @@ export const bloques = [
         tarjeta: {
           titulo: 'Macondo para el mundo',
           autor: 'Gabriel García Márquez',
+          retrato: '/tarjetas/09.svg',
           texto:
             'Gabriel García Márquez (Aracataca, 1927-2014) publicó «Cien años de soledad» en 1967 y ganó el Premio ' +
             'Nobel de Literatura en 1982. Macondo, el pueblo de la novela, es uno de los lugares imaginarios más ' +

@@ -1,73 +1,393 @@
+/* ─── Tarjeta Cultural y Cierre de Bloque: Diseño Editorial Minimalista ─── */
+
 .tarjeta-cultural {
-  gap: 4px;
-}
-
-.tarjeta-cultural .chip {
-  align-self: flex-start;
-}
-
-.tarjeta-cultural.oscura {
+  display: flex;
+  flex-direction: column;
   align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-4);
+  padding-top: calc(16px + var(--arriba));
+  padding-bottom: calc(16px + var(--abajo));
+}
+
+/* En tablet y escritorio se amplía el lienzo para formato editorial horizontal centrado */
+@media (min-width: 768px) {
+  .pantalla.tarjeta-cultural {
+    max-width: 800px;
+    padding-left: var(--sp-6);
+    padding-right: var(--sp-6);
+    justify-content: center;
+    gap: var(--sp-5);
+  }
+
+  .tarjeta-cultural .tarjeta-editorial {
+    margin: 0 auto;
+  }
+}
+
+/* ─── Encabezado (Festejo + Chip de progreso) ─── */
+
+.tarjeta-encabezado {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-2);
+  width: 100%;
   text-align: center;
-  padding-top: calc(48px + var(--arriba));
-}
-
-.tarjeta-cultural.oscura .chip {
-  align-self: center;
-  margin-top: 18px;
-}
-
-.tarjeta-cultural h1 {
-  font-size: clamp(26px, 8vw, 32px);
-  margin-top: 6px;
-  text-wrap: balance;
-}
-
-.tarjeta-cultural .texto {
-  font-size: 17px;
-  line-height: 1.55;
-  margin-top: 12px;
-  font-weight: 600;
-}
-
-.tarjeta-cultural.oscura .texto {
-  opacity: 0.92;
-}
-
-.tarjeta-cultural .tarjeta {
-  padding: 20px;
-  margin-top: 14px;
-}
-
-.tarjeta-cultural .autor {
-  color: var(--g5);
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 1.2px;
-  font-size: 13px;
+  padding: 2px 8px;
+  animation: entradaSuaveTexto 0.32s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 .festejo {
-  text-align: center;
-  font-family: var(--fuente-titulo);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--fuente);
   font-weight: 600;
-  font-size: 20px;
+  font-size: 12.5px;
+  letter-spacing: 0.02em;
   color: var(--g7);
-  margin: 6px 0 14px;
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: var(--gold-suave);
+  border: 1px solid var(--gold);
+  color: var(--gold-ink);
+}
+
+.festejo svg {
+  color: var(--g7);
+}
+
+.tarjeta-cultural .chip {
+  align-self: center;
+}
+
+/* ─── Contenedor Editorial Principal (centrado vertical y horizontalmente) ─── */
+
+.tarjeta-cultural .tarjeta-editorial {
+  width: 100%;
+  max-width: 440px;
+  margin: auto 0;
+  padding: var(--sp-6) var(--sp-5);
+  background: var(--card);
+  border: 1px solid var(--linea);
+  border-radius: 20px;
+  box-shadow: var(--sombra);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-5);
+  position: relative;
+  overflow: hidden;
+  animation: none;
+}
+
+/* Detalle editorial superior: filete fino institucional */
+.tarjeta-cultural .tarjeta-editorial::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 24%;
+  right: 24%;
+  height: 2px;
+  background: var(--gold);
+  border-radius: 0 0 999px 999px;
+  opacity: 0.85;
+}
+
+/* ─── Marco y Retrato del Autor ─── */
+
+.retrato-marco {
+  position: relative;
+  width: clamp(180px, 52vw, 224px);
+  height: clamp(180px, 52vw, 224px);
+  display: grid;
+  place-items: center;
+  margin: var(--sp-1) auto 0;
+  flex: none;
+  animation: entradaRetrato 0.44s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Círculo minimalista detrás del retrato */
+.retrato-halo {
+  position: absolute;
+  inset: 10px;
+  border-radius: 50%;
+  background: var(--paper);
+  border: 1px solid var(--linea);
+}
+
+.retrato-halo::after {
+  content: '';
+  position: absolute;
+  inset: -5px;
+  border-radius: 50%;
+  border: 1px solid var(--gold);
+  opacity: 0.38;
+}
+
+.retrato-img {
+  position: relative;
+  z-index: 1;
+  width: 92%;
+  height: 92%;
+  object-fit: contain;
+  display: block;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+/* ─── Cuerpo Tipográfico Editorial ─── */
+
+.tarjeta-cuerpo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  width: 100%;
+}
+
+.tarjeta-cultural .autor {
+  color: var(--g7);
+  font-family: var(--fuente);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 11.5px;
+  line-height: 1.3;
+  animation: entradaSuaveTexto 0.38s cubic-bezier(0.22, 1, 0.36, 1) 0.08s both;
+}
+
+.tarjeta-cultural h1 {
+  font-family: var(--fuente-titulo);
+  font-size: clamp(22px, 6vw, 27px);
+  line-height: 1.2;
+  font-weight: 600;
+  letter-spacing: -0.022em;
+  color: var(--ink);
+  margin-top: var(--sp-2);
+  text-wrap: balance;
+  max-width: 24ch;
+  animation: entradaSuaveTexto 0.4s cubic-bezier(0.22, 1, 0.36, 1) 0.14s both;
+}
+
+.tarjeta-divisor {
+  width: 36px;
+  height: 1.5px;
+  background: var(--gold);
+  border-radius: 999px;
+  margin-top: var(--sp-3);
+  margin-bottom: var(--sp-3);
+  flex: none;
+  animation: entradaSuaveTexto 0.4s cubic-bezier(0.22, 1, 0.36, 1) 0.18s both;
+}
+
+.tarjeta-cultural .texto {
+  font-family: var(--fuente);
+  font-size: 15.5px;
+  line-height: 1.62;
+  font-weight: 400;
+  color: var(--sub);
+  margin-top: 0;
+  max-width: 62ch;
+  text-align: center;
+  animation: entradaSuaveTexto 0.42s cubic-bezier(0.22, 1, 0.36, 1) 0.22s both;
+}
+
+/* ─── Vista de Cierre de Bloque (Sello + 3 retratos de los autores del bloque) ─── */
+
+.cierre-emblema {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-3);
+  width: 100%;
+  animation: entradaRetrato 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 .sello-grande {
-  width: 130px;
-  height: 130px;
+  width: 76px;
+  height: 76px;
   border-radius: 50%;
-  border: 5px solid var(--gold);
+  border: 1.5px solid var(--gold-sombra);
+  color: var(--gold-ink);
   display: grid;
   place-items: center;
-  font-size: 60px;
-  transform: rotate(-8deg);
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--gold-suave);
+  flex: none;
 }
 
-.tarjeta-cultural .pie {
+.cierre-retratos {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: var(--sp-1);
+}
+
+.cierre-miniatura {
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  background: var(--paper);
+  border: 2px solid var(--card);
+  outline: 1px solid var(--linea-fuerte);
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  flex: none;
+  padding: 4px;
+}
+
+.cierre-miniatura + .cierre-miniatura {
+  margin-left: -12px;
+}
+
+.cierre-miniatura:nth-child(2) {
+  width: 74px;
+  height: 74px;
+  z-index: 2;
+  background: var(--g1);
+  outline-color: var(--gold);
+}
+
+.cierre-miniatura img {
   width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+/* ─── Pie con botón fijo al alcance del pulgar ─── */
+
+.tarjeta-cultural .tarjeta-pie {
+  position: sticky;
+  bottom: 0;
+  z-index: 5;
+  width: 100%;
+  max-width: 440px;
+  margin-top: 0;
+  padding-top: var(--sp-3);
+  padding-bottom: max(4px, var(--abajo));
+  background: linear-gradient(
+    to top,
+    var(--paper) 72%,
+    rgba(250, 250, 250, 0) 100%
+  );
+  animation: entradaSuaveTexto 0.42s cubic-bezier(0.22, 1, 0.36, 1) 0.26s both;
+}
+
+/* ─── Responsive: Pantallas Pequeñas (320 px - iPhone SE) ─── */
+
+@media (max-width: 359px) {
+  .tarjeta-cultural .tarjeta-editorial {
+    padding: var(--sp-4);
+    gap: var(--sp-4);
+  }
+
+  .retrato-marco {
+    width: 168px;
+    height: 168px;
+  }
+
+  .tarjeta-cultural h1 {
+    font-size: 20px;
+  }
+
+  .tarjeta-cultural .texto {
+    font-size: 14.5px;
+    line-height: 1.58;
+  }
+}
+
+/* ─── Responsive: Tablet y Escritorio (≥ 768 px) ─── */
+
+@media (min-width: 768px) {
+  .tarjeta-cultural .tarjeta-editorial {
+    max-width: 740px;
+    flex-direction: row;
+    align-items: center;
+    gap: var(--sp-8);
+    padding: var(--sp-8);
+  }
+
+  .tarjeta-cultural .tarjeta-editorial::before {
+    top: 20%;
+    bottom: 20%;
+    left: 0;
+    right: auto;
+    width: 3px;
+    height: auto;
+    border-radius: 0 999px 999px 0;
+  }
+
+  .retrato-marco {
+    width: 232px;
+    height: 232px;
+    margin: 0;
+  }
+
+  .cierre-emblema {
+    width: 232px;
+    flex: none;
+  }
+
+  .tarjeta-cuerpo {
+    align-items: flex-start;
+    text-align: left;
+    flex: 1;
+  }
+
+  .tarjeta-cultural .texto {
+    text-align: left;
+  }
+
+  .tarjeta-cultural h1 {
+    max-width: none;
+  }
+
+  .tarjeta-cultural .tarjeta-pie {
+    position: static;
+    max-width: 740px;
+    padding-top: 0;
+    padding-bottom: 0;
+    background: none;
+  }
+}
+
+/* ─── Keyframes (≤ 500 ms) y Accesibilidad (prefers-reduced-motion) ─── */
+
+@keyframes entradaRetrato {
+  from {
+    opacity: 0;
+    transform: scale(0.93) translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes entradaSuaveTexto {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tarjeta-encabezado,
+  .retrato-marco,
+  .cierre-emblema,
+  .tarjeta-cultural .autor,
+  .tarjeta-cultural h1,
+  .tarjeta-divisor,
+  .tarjeta-cultural .texto,
+  .tarjeta-cultural .tarjeta-pie {
+    animation: none !important;
+    transition: none !important;
+  }
 }
