@@ -7,7 +7,16 @@ import './estilos/base.css'
 import { App } from './App'
 import { ProveedorJuego } from './juego'
 
-registerSW({ immediate: true })
+// Busca versiones nuevas al abrir, al volver a la pestaña y cada minuto; al encontrar una, la página se recarga sola.
+registerSW({
+  immediate: true,
+  onRegisteredSW(_url, registro) {
+    if (!registro) return
+    const buscar = () => registro.update().catch(() => {})
+    setInterval(buscar, 60_000)
+    document.addEventListener('visibilitychange', () => document.visibilityState === 'visible' && buscar())
+  },
+})
 
 // En iPhone el teclado tapa la parte baja de la pantalla: centrar el campo al enfocarlo.
 document.addEventListener('focusin', (e) => {

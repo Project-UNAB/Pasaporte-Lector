@@ -33,6 +33,10 @@ export default defineConfig(({ command, isPreview }) => ({
         ],
       },
       workbox: {
+        // Una versión nueva reemplaza a la vieja de inmediato y borra su caché: nadie se queda con código antiguo.
+        skipWaiting: true,
+        clientsClaim: true,
+        cleanupOutdatedCaches: true,
         globPatterns: ['**/*.{js,css,html,svg,png,ico,woff2}'],
         // Solo se precargan las fuentes latinas; el resto no se usa en español.
         globIgnores: ['**/*-{cyrillic,cyrillic-ext,greek,greek-ext,hebrew,vietnamese,math,symbols}-*.woff2'],
